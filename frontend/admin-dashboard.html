@@ -875,41 +875,42 @@
             </div>
         </section>
 
-        <section class="panel">
-            <div class="panel-heading">
-                <div>
-                    <h2>Quiz Results & Monitoring</h2>
-                    <p class="muted">
-                        Intended for private admin review after backend integration.
-                    </p>
-                </div>
-            </div>
+        
+<section class="panel" id="quizResultsPanel">
+    <div class="panel-heading">
+        <div>
+            <h2>Quiz Results &amp; Monitoring</h2>
+            <p class="muted">
+                Combined results for all three levels.
+            </p>
+        </div>
+    </div>
 
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>PARTICIPANT</th>
-                            <th>LEVEL</th>
-                            <th>CORRECT</th>
-                            <th>WRONG</th>
-                            <th>UNANSWERED</th>
-                            <th>SCORE</th>
-                            <th>STATUS</th>
-                        </tr>
-                    </thead>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>PARTICIPANT</th>
+                    <th>TOTAL QUESTIONS</th>
+                    <th>CORRECT</th>
+                    <th>INCORRECT</th>
+                    <th>UNANSWERED</th>
+                    <th>TOTAL SCORE</th>
+                    <th>STATUS</th>
+                </tr>
+            </thead>
 
-                    <tbody id="resultsTableBody">
-                        <tr>
-                            <td colspan="7" class="empty-row">
-                                No results available yet. Results must be fetched
-                                from a protected admin-only backend endpoint.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+            <tbody id="resultsTableBody">
+                <tr>
+                    <td colspan="7" class="empty-row">
+                        No results available yet.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
 
     </main>
 

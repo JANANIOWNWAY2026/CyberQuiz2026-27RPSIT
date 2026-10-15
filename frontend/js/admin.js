@@ -471,6 +471,7 @@ async function loadAdminRoundStatuses() {
    RESULTS
 ========================================= */
 
+
 async function loadAdminResults() {
     const tableBody = document.querySelector(
         "#resultsTable tbody, #resultsTableBody"
@@ -490,20 +491,16 @@ async function loadAdminResults() {
         const completedCount = document.getElementById("completedCount");
 
         if (completedCount) {
-            const completedLevels = new Set(
-                allAdminResults
-                    .map(item => Number(item.level))
-                    .filter(level => [1, 2, 3].includes(level))
-            );
-
-            completedCount.textContent = completedLevels.size;
+            completedCount.textContent = allAdminResults.filter(
+                item => item.status === "Completed"
+            ).length;
         }
 
         if (!allAdminResults.length) {
             const row = document.createElement("tr");
             const cell = document.createElement("td");
             cell.colSpan = 7;
-            cell.textContent = "No results available yet.";
+            cell.textContent = "No participant results available yet.";
             row.appendChild(cell);
             tableBody.appendChild(row);
             return;
@@ -514,18 +511,21 @@ async function loadAdminResults() {
 
             [
                 item.participant_name || "—",
-                item.level ?? "—",
+                item.total_questions ?? 0,
                 item.correct_answers ?? 0,
                 item.wrong_answers ?? 0,
                 item.unanswered ?? 0,
                 item.score ?? 0,
-                "Completed"
+                item.status || "In Progress"
             ].forEach(value => createCell(row, value));
 
             tableBody.appendChild(row);
         });
     } catch (error) {
-        showAdminMessage(`Could not load results: ${error.message}`, true);
+        showAdminMessage(
+            `Could not load results: ${error.message}`,
+            true
+        );
     }
 }
 
