@@ -446,73 +446,104 @@ def authorize_quiz_retry(
     }
 
 
+
 @router.get("/results")
 def get_quiz_results(
     db: Session = Depends(get_db),
     admin: dict = Depends(require_admin),
 ):
+    participants = (
+        db.query(Participant)
+        .order_by(Participant.created_at.desc())
+        .all()
+    )
+
+    rounds = {
+        round_.level: round_.question_count
+        for round_ in db.query(QuizRound)
+        .filter(QuizRound.level.in_([1, 2, 3]))
+        .all()
+    }
+
     results = (
-        db.query(QuizResult, Participant)
-        .join(
-            Participant,
-            QuizResult.participant_id == Participant.id,
+        db.query(QuizResult)
+        .filter(QuizResult.level.in_([1, 2, 3]))
+        .order_by(
+            QuizResult.submitted_at.desc(),
+            QuizResult.id.desc(),
         )
         .all()
     )
 
-    # Rank each level separately:
-    # 1. Higher score first.
-    # 2. For equal scores, shorter completion time first.
-    # 3. Use submission time and result ID to break remaining ties.
-    results.sort(
-        key=lambda item: (
-            item[0].level,
-            -(item[0].score or 0),
-            (
-                item[0].duration_seconds
-                if item[0].duration_seconds is not None
-                else float("inf")
-            ),
-            (
-                item[0].submitted_at.isoformat()
-                if item[0].submitted_at is not None
-                else ""
-            ),
-            item[0].id,
-        )
-    )
+    # Keep the latest submitted result for each participant and level.
+    latest_results = {}
 
-    level_ranks = {}
+    for result in results:
+        key = (result.participant_id, result.level)
+
+        if key not in latest_results:
+            latest_results[key] = result
+
     response = []
 
-    for result, participant in results:
-        level = result.level
-        level_ranks[level] = level_ranks.get(level, 0) + 1
+    for participant in participants:
+        participant_results = [
+            latest_results.get((participant.id, level))
+            for level in (1, 2, 3)
+        ]
+
+        submitted_results = [
+            result
+            for result in participant_results
+            if result is not None
+        ]
+
+        correct = sum(
+            result.correct_answers or 0
+            for result in submitted_results
+        )
+        incorrect = sum(
+            result.wrong_answers or 0
+            for result in submitted_results
+        )
+        unanswered = sum(
+            result.unanswered or 0
+            for result in submitted_results
+        )
+        total_score = sum(
+            result.score or 0
+            for result in submitted_results
+        )
+
+        total_questions = sum(
+            rounds.get(level, 0)
+            for level in (1, 2, 3)
+        )
+
+        all_levels_completed = (
+            all(participant_results[level - 1] is not None for level in (1, 2, 3))
+            and all(rounds.get(level, 0) > 0 for level in (1, 2, 3))
+        )
 
         response.append({
-            "result_id": result.id,
-            "rank": level_ranks[level],
             "participant_id": participant.id,
             "participant_name": participant.name,
             "register_number": participant.register_number,
-            "college_name": participant.college_name,
-            "college_location": participant.college_location,
-            "gender": participant.gender,
-            "phone": participant.phone,
-            "email": participant.email,
-            "department": participant.department,
-            "course": participant.course,
-            "level": result.level,
-            "correct_answers": result.correct_answers,
-            "wrong_answers": result.wrong_answers,
-            "unanswered": result.unanswered,
-            "score": result.score,
-            "duration_seconds": result.duration_seconds,
-            "answers": result.answers_json,
-            "submitted_at": result.submitted_at,
+            "total_questions": total_questions,
+            "correct_answers": correct,
+            "wrong_answers": incorrect,
+            "unanswered": unanswered,
+            "score": total_score,
+            "completed_levels": len(submitted_results),
+            "status": (
+                "Completed"
+                if all_levels_completed
+                else "In Progress"
+            ),
         })
 
     return response
+
 
 
 def get_or_create_leaderboard_setting(db: Session):
