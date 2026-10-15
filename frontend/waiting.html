@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#07111f">
+
+    <title>CyberQuiz | Secure Waiting Room</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        :root {
+            --bg: #050b16;
+            --panel: rgba(11, 24, 43, 0.88);
+            --cyan: #00e5ff;
+            --blue: #3987ff;
+            --purple: #a855f7;
+            --text: #f2f7ff;
+            --muted: #91a6c2;
+            --border: rgba(0, 229, 255, 0.22);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+            background:
+                radial-gradient(circle at 15% 15%,
+                    rgba(0, 229, 255, 0.12),
+                    transparent 32%),
+                radial-gradient(circle at 85% 75%,
+                    rgba(168, 85, 247, 0.13),
+                    transparent 35%),
+                linear-gradient(135deg, #040914, #091629 55%, #060b18);
+            overflow-x: hidden;
+        }
+
+        /* Ambient background lights */
+
+        .ambient-light {
+            position: fixed;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.22;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatLight 8s ease-in-out infinite alternate;
+        }
+
+        .ambient-one {
+            top: 18%;
+            left: -100px;
+            background: var(--cyan);
+        }
+
+        .ambient-two {
+            right: -100px;
+            bottom: 10%;
+            background: var(--purple);
+            animation-delay: 2s;
+        }
+
+        @keyframes floatLight {
+            from {
+                transform: translateY(-20px) scale(0.9);
+                opacity: 0.13;
+            }
+
+            to {
+                transform: translateY(35px) scale(1.15);
+                opacity: 0.27;
+            }
+        }
+
+        /* Navbar */
+
+        .navbar {
+            position: relative;
+            z-index: 2;
+            background: rgba(4, 10, 22, 0.78);
+            border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+            backdrop-filter: blur(18px);
+        }
+
+        .nav-container {
+            min-height: 76px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-icon {
+            color: var(--cyan);
+            margin-right: 7px;
+            text-shadow: 0 0 15px var(--cyan);
+        }
+
+        .logo span:last-child {
+            color: var(--cyan);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.25s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--cyan);
+        }
+
+        /* Main layout */
+
+        .waiting-container {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 55px 20px;
+        }
+
+        .waiting-card {
+            position: relative;
+            isolation: isolate;
+            width: 100%;
+            max-width: 720px;
+            padding: 42px 34px;
+            overflow: hidden;
+            text-align: center;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            backdrop-filter: blur(22px);
+            box-shadow:
+                0 0 35px rgba(0, 229, 255, 0.07),
+                0 25px 80px rgba(0, 0, 0, 0.35);
+            animation: cardAppear 0.8s ease both;
+        }
+
+        .waiting-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 70%;
+            height: 2px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    var(--cyan),
+                    white,
+                    var(--purple),
+                    transparent);
+            animation: borderScan 5s linear infinite;
+        }
+
+        .waiting-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg,
+                    rgba(0, 229, 255, 0.3),
+                    transparent 35%,
+                    rgba(168, 85, 247, 0.2));
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+
+            mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes borderScan {
+            to {
+                left: 130%;
+            }
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Top label */
+
+        .security-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 14px;
+            margin-bottom: 28px;
+            color: #8cefff;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 30px;
+            background: rgba(0, 229, 255, 0.055);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: #00ffad;
+            box-shadow: 0 0 10px #00ffad;
+            animation: blink 1.4s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 12px #00ffad;
+            }
+
+            50% {
+                opacity: 0.25;
+                box-shadow: 0 0 2px #00ffad;
+            }
+        }
+
+        /* Animated icon */
+
+        .waiting-icon {
+            position: relative;
+            width: 112px;
+            height: 112px;
+            margin: 0 auto 27px;
+            display: grid;
+            place-items: center;
+            font-size: 45px;
+            border: 1px solid rgba(0, 229, 255, 0.5);
+            border-radius: 50%;
+            background:
+                radial-gradient(circle,
+                    rgba(0, 229, 255, 0.15),
+                    rgba(0, 229, 255, 0.025) 70%);
+            box-shadow:
+                0 0 20px rgba(0, 229, 255, 0.13),
+                inset 0 0 20px rgba(0, 229, 255, 0.07);
+            animation: iconPulse 2.6s ease-in-out infinite;
+        }
+
+        .waiting-icon::before,
+        .waiting-icon::after {
+            content: "";
+            position: absolute;
+            inset: -9px;
+            border: 1px solid rgba(0, 229, 255, 0.18);
+            border-radius: 50%;
+            animation: ringPulse 2.6s ease-out infinite;
+        }
+
+        .waiting-icon::after {
+            animation-delay: 1.3s;
+        }
+
+        @keyframes iconPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow:
+                    0 0 18px rgba(0, 229, 255, 0.13),
+                    inset 0 0 20px rgba(0, 229, 255, 0.06);
+            }
+
+            50% {
+                transform: scale(1.045);
+                box-shadow:
+                    0 0 38px rgba(0, 229, 255, 0.28),
+                    inset 0 0 26px rgba(0, 229, 255, 0.12);
+            }
+        }
+
+        @keyframes ringPulse {
+            from {
+                transform: scale(0.92);
+                opacity: 0.7;
+            }
+
+            to {
+                transform: scale(1.3);
+                opacity: 0;
+            }
+        }
+
+        /* Heading and text */
+
+        .waiting-card h1 {
+            margin: 0 0 15px;
+            color: var(--text);
+            font-size: clamp(27px, 5vw, 39px);
+            line-height: 1.25;
+            font-weight: 800;
+        }
+
+        .waiting-card h1 span {
+            color: var(--cyan);
+            text-shadow: 0 0 22px rgba(0, 229, 255, 0.28);
+        }
+
+        .waiting-message {
+            max-width: 540px;
+            margin: 0 auto 27px;
+            color: #a9bad0;
+            font-size: 15px;
+            line-height: 1.85;
+        }
+
+        /* Access status */
+
+        .status-box {
+            position: relative;
+            margin: 25px 0;
+            padding: 22px 18px;
+            background: linear-gradient(120deg,
+                    rgba(0, 229, 255, 0.055),
+                    rgba(168, 85, 247, 0.045));
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .status-box::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: -100%;
+            width: 45%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(0, 229, 255, 0.06),
+                    transparent);
+            animation: statusScan 4s ease-in-out infinite;
+        }
+
+        @keyframes statusScan {
+            0% {
+                left: -100%;
+            }
+
+            65%,
+            100% {
+                left: 150%;
+            }
+        }
+
+        .status-label {
+            margin: 0 0 12px;
+            color: #819ab7;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+        }
+
+        .status-value {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            color: var(--cyan);
+            font-size: clamp(16px, 3vw, 20px);
+            font-weight: 800;
+            letter-spacing: 1px;
+            overflow-wrap: anywhere;
+            text-shadow: 0 0 15px rgba(0, 229, 255, 0.28);
+        }
+
+        .waiting-dots span {
+            display: inline-block;
+            animation: dots 1.4s infinite;
+        }
+
+        .waiting-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .waiting-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes dots {
+
+            0%,
+            80%,
+            100% {
+                opacity: 0.2;
+                transform: translateY(0);
+            }
+
+            40% {
+                opacity: 1;
+                transform: translateY(-4px);
+            }
+        }
+
+        .waiting-note {
+            margin: 22px 0;
+            color: #8094ab;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        /* Level start button */
+
+        .waiting-actions {
+            display: flex;
+            justify-content: center;
+            gap: 13px;
+            flex-wrap: wrap;
+            margin-top: 27px;
+        }
+
+        .waiting-actions a,
+        .waiting-actions button {
+            font: inherit;
+            text-decoration: none;
+        }
+
+        .primary-button,
+        .secondary-button {
+            min-height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            padding: 12px 23px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition:
+                transform 0.25s,
+                box-shadow 0.25s,
+                border-color 0.25s,
+                background 0.25s;
+        }
+
+        .primary-button {
+            color: #04101a;
+            background: linear-gradient(110deg, #00e5ff, #67f4ff);
+            border: 1px solid transparent;
+            box-shadow: 0 0 22px rgba(0, 229, 255, 0.17);
+        }
+
+        .primary-button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 0 32px rgba(0, 229, 255, 0.35);
+        }
+
+        .primary-button:disabled {
+            color: #8295aa;
+            background: #17283a;
+            border-color: #294056;
+            box-shadow: none;
+            cursor: not-allowed;
+            opacity: 0.85;
+        }
+
+        .secondary-button {
+            color: #dceaff;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid #29435e;
+        }
+
+        .secondary-button:hover {
+            transform: translateY(-2px);
+            color: var(--cyan);
+            border-color: var(--cyan);
+        }
+
+        .waiting-actions button:focus-visible,
+        .waiting-actions a:focus-visible {
+            outline: 2px solid white;
+            outline-offset: 4px;
+        }
+
+        /* Connection information */
+
+        .connection-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px 22px;
+            margin-top: 30px;
+            padding-top: 21px;
+            border-top: 1px solid rgba(143, 166, 191, 0.12);
+            color: #7e94ad;
+            font-size: 11px;
+        }
+
+        .connection-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .connection-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #00ffad;
+            box-shadow: 0 0 8px rgba(0, 255, 173, 0.6);
+        }
+
+        /* Footer */
+
+        .footer {
+            position: relative;
+            z-index: 1;
+            padding: 18px 15px;
+            text-align: center;
+            background: rgba(4, 10, 22, 0.65);
+            border-top: 1px solid rgba(0, 229, 255, 0.1);
+        }
+
+        .footer p {
+            margin: 0;
+            color: #71869f;
+            font-size: 12px;
+        }
+
+        @media (max-width: 520px) {
+            .nav-container {
+                padding: 15px 18px;
+                flex-direction: column;
+                gap: 13px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            .waiting-container {
+                padding: 35px 14px;
+            }
+
+            .waiting-card {
+                padding: 35px 20px;
+                border-radius: 18px;
+            }
+
+            .waiting-icon {
+                width: 94px;
+                height: 94px;
+                font-size: 38px;
+            }
+
+            .waiting-actions {
+                flex-direction: column;
+            }
+
+            .waiting-actions a,
+            .waiting-actions button {
+                width: 100%;
+            }
+
+            .connection-info {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="ambient-light ambient-one" aria-hidden="true"></div>
+    <div class="ambient-light ambient-two" aria-hidden="true"></div>
+
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">⬡</span>
+                Cyber<span>Quiz</span>
+            </a>
+
+            <nav aria-label="Main navigation">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li>
+                        <a href="waiting.html" class="active">
+                            Waiting Room
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="waiting-container">
+        <section class="waiting-card" aria-labelledby="pageTitle">
+
+            <div class="security-label">
+                <span class="live-dot" aria-hidden="true"></span>
+                SECURE EVENT GATEWAY
+            </div>
+
+            <div class="waiting-icon" aria-hidden="true">⌛</div>
+
+            <h1 id="pageTitle">
+                Welcome to the <span>Waiting Room</span>
+            </h1>
+
+            <p class="waiting-message" id="waitingMessage">
+                Your next CyberQuiz round will be available when the
+                administrator grants access. Stay ready for the next challenge.
+            </p>
+
+            <div class="status-box" aria-live="polite">
+                <p class="status-label">ROUND ACCESS STATUS</p>
+
+                <p class="status-value" id="statusValue">
+                    CONNECTING
+                    <span class="waiting-dots" aria-hidden="true">
+                        <span>.</span><span>.</span><span>.</span>
+                    </span>
+                </p>
+            </div>
+
+            <p class="waiting-note" id="waitingNote">
+                Verifying your access with the CyberQuiz server...
+            </p>
+
+            <div class="waiting-actions">
+                <button type="button" class="primary-button" id="openRoundButton" disabled>
+                    <span aria-hidden="true">🔒</span>
+                    <span id="openRoundButtonText">Checking Access...</span>
+                </button>
+
+                <button type="button" class="secondary-button" id="viewResultsButton" hidden>
+                    View Results
+                </button>
+
+                <a href="index.html" class="secondary-button">
+                    Back to Home
+                </a>
+
+                <a href="login.html" class="secondary-button">
+                    Return to Login
+                </a>
+            </div>
+
+            <div class="connection-info">
+                <span class="connection-item">
+                    <span class="connection-dot" aria-hidden="true"></span>
+                    <span id="connectionStatus">Checking server</span>
+                </span>
+
+                <span class="connection-item">
+                    <span aria-hidden="true">🛡</span>
+                    Secure session verification
+                </span>
+            </div>
+
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>
+                &copy; <span id="currentYear"></span> CyberQuiz.
+                All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+     <script>
+        document.getElementById("currentYear").textContent =
+            new Date().getFullYear();
+
+
+        const API_BASE = "http://127.0.0.1:8000";
+        const token = sessionStorage.getItem("cyberquiz_access_token");
+
+        const statusValue = document.getElementById("statusValue");
+        const waitingMessage = document.getElementById("waitingMessage");
+        const waitingNote = document.getElementById("waitingNote");
+        const openRoundButton = document.getElementById("openRoundButton");
+        const openRoundButtonText = document.getElementById("openRoundButtonText");
+        const viewResultsButton = document.getElementById("viewResultsButton");
+        const connectionStatus = document.getElementById("connectionStatus");
+
+        let checkingAccess = false;
+        let currentAvailableLevel = null;
+        let resultsAvailable = false;
+
+        function setStatus(title, message, note) {
+            statusValue.textContent = title;
+            waitingMessage.textContent = message;
+            waitingNote.textContent = note;
+        }
+
+
+        function setRoundButton(level, enabled) {
+            currentAvailableLevel = enabled ? level : null;
+
+            // Waiting state-la irundhaalum participant click pannalaam.
+            openRoundButton.disabled = false;
+            openRoundButton.hidden = false;
+
+            if (enabled) {
+                openRoundButton.innerHTML =
+                    '<span aria-hidden="true">🚀</span>' +
+                    `<span>Open Level ${level}</span>`;
+            } else {
+                openRoundButton.innerHTML =
+                    '<span aria-hidden="true">🔒</span>' +
+                    '<span>Waiting for Admin Access</span>';
+            }
+        }
+
+
+
+        async function checkResultsAccess() {
+            const response = await fetch(
+                `${API_BASE}/api/quiz/leaderboard-status`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Accept": "application/json"
+                    },
+                    cache: "no-store"
+                }
+            );
+
+            if (!response.ok) {
+                resultsAvailable = false;
+                viewResultsButton.hidden = true;
+                return false;
+            }
+
+            const data = await response.json();
+            console.log("LEVELS API RESPONSE:", data);
+
+            const hasCompletedLevel3 =
+                data.has_completed_level_3 === true;
+
+            const isPublished =
+                data.is_published === true;
+
+            resultsAvailable =
+                data.can_view_results === true;
+
+            // Level 3 complete aana mattum button show aagum.
+            // Admin publish pannina piragu dhaan results open aagum.
+            viewResultsButton.hidden = !hasCompletedLevel3;
+
+            return resultsAvailable;
+        }
+
+
+        async function checkRoundAccess() {
+            if (checkingAccess) return;
+            checkingAccess = true;
+
+            try {
+                if (!token) {
+                    setStatus(
+                        "LOGIN REQUIRED",
+                        "Please log in to check your CyberQuiz access.",
+                        "Redirecting you to the login page..."
+                    );
+                    connectionStatus.textContent = "Login required";
+                    window.location.replace("login.html");
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE}/api/quiz/levels`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Accept": "application/json"
+                    },
+                    cache: "no-store"
+                });
+                console.log("LEVELS API STATUS:", response.status);
+
+                if (response.status === 401 || response.status === 403) {
+                    setStatus(
+                        "ACCESS NOT APPROVED",
+                        "Your account or quiz access is not approved yet.",
+                        "Please wait for the administrator."
+                    );
+
+                    connectionStatus.textContent = "Access restricted";
+
+                    if (response.status === 401) {
+                        sessionStorage.removeItem("cyberquiz_access_token");
+                        window.location.replace("login.html");
+                    }
+
+                    setRoundButton(null, false);
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}`);
+                }
+                
+
+                const levels = await response.json();
+                
+console.log("ACTUAL LEVELS RESPONSE:", levels);
+
+                if (!Array.isArray(levels)) {
+                    throw new Error("Unexpected levels response");
+                }
+
+                connectionStatus.textContent = "Server connected";
+                await checkResultsAccess();
+
+                /*
+                 * Do not automatically redirect into a quiz.
+                 * A participant must click the enabled Open Level button.
+                 */
+                const availableLevel = levels
+                    .filter(level =>
+                        level.can_start === true &&
+                        level.is_approved === true &&
+                        level.is_round_active === true &&
+                        level.is_unlocked === true &&
+                        level.is_completed !== true
+                    )
+                    .sort((a, b) => Number(a.level) - Number(b.level))[0];
+
+                if (availableLevel) {
+                    setStatus(
+                        `LEVEL ${availableLevel.level} READY`,
+                        `Level ${availableLevel.level} access is available.`,
+                        "Click Open Level when you are ready. Your quiz session and timer will be handled by the server."
+                    );
+
+                    openRoundButton.disabled = false;
+                    currentAvailableLevel = availableLevel.level;
+                    openRoundButton.hidden = false;
+                    openRoundButton.innerHTML =
+                        '<span aria-hidden="true">🚀</span>' +
+                        `<span>Open Level ${availableLevel.level}</span>`;
+
+                    return;
+                }
+
+                setRoundButton(null, false);
+
+                const pendingLevel = levels
+                    .filter(level => level.is_approved === true)
+                    .sort((a, b) => a.level - b.level)[0];
+
+                if (pendingLevel) {
+                    setStatus(
+                        "WAITING FOR ROUND",
+                        `Your Level ${pendingLevel.level} approval is recorded.`,
+                        "The administrator must activate the round before you can open it."
+                    );
+                } else {
+                    setStatus(
+                        "WAITING FOR ADMIN",
+                        "Your next quiz round is waiting for administrator approval.",
+                        "This page checks access automatically. You do not need to log in again."
+                    );
+                }
+
+            } catch (error) {
+                console.error("Waiting Room access check failed:", error);
+
+                connectionStatus.textContent = "Server unavailable";
+
+                setStatus(
+                    "CONNECTION CHECK",
+                    "We could not verify your access right now.",
+                    "Make sure the backend server is running. CyberQuiz will retry automatically."
+                );
+
+                setRoundButton(null, false);
+            } finally {
+                checkingAccess = false;
+            }
+        }
+
+        openRoundButton.addEventListener("click", async () => {
+            if (openRoundButton.disabled) return;
+
+            if (!currentAvailableLevel) {
+                setStatus(
+                    "WAITING FOR ADMIN",
+                    "Your next quiz round is waiting for administrator approval.",
+                    "Please wait. Access status refreshes automatically."
+                );
+
+                await checkRoundAccess();
+                return;
+            }
+
+            const level = currentAvailableLevel;
+
+            openRoundButton.disabled = true;
+            openRoundButton.innerHTML =
+                '<span aria-hidden="true">⏳</span>' +
+                '<span>Verifying Access...</span>';
+
+            try {
+                /*
+                 * Re-check permission at click time.
+                 * The backend must still enforce approval when the game starts.
+                 */
+                const response = await fetch(`${API_BASE}/api/quiz/levels`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Accept": "application/json"
+                    },
+                    cache: "no-store"
+                });
+
+                if (!response.ok) {
+                    throw new Error("Could not verify round access");
+                }
+
+                const levels = await response.json();
+
+                const confirmed = levels.find(
+                    item => Number(item.level) === Number(level)
+                );
+
+                if (!confirmed || confirmed.can_start !== true) {
+                    setStatus(
+                        "ACCESS NOT AVAILABLE",
+                        "This round is no longer available.",
+                        "Waiting for the latest administrator update..."
+                    );
+
+                    await checkRoundAccess();
+
+                    const resultsReady = await checkResultsAccess();
+
+                    if (resultsReady) {
+                        setStatus(
+                            "RESULTS AVAILABLE",
+                            "Your Level 3 is complete and the administrator has published the final results.",
+                            "Click View Results to see your results."
+                        );
+                    } else if (!viewResultsButton.hidden) {
+                        setStatus(
+                            "WAITING FOR ADMIN",
+                            "Your Level 3 submission is complete. Final results are waiting for administrator publication.",
+                            "You do not need to log in again. This page checks for publication automatically."
+                        );
+                    }
+
+                    return;
+                }
+
+                window.location.href = `game.html?level=${Number(level)}`;
+
+            } catch (error) {
+                console.error("Unable to open round:", error);
+
+                setStatus(
+                    "PLEASE TRY AGAIN",
+                    "The round could not be opened right now.",
+                    "Check your connection and try again in a moment."
+                );
+
+                await checkRoundAccess();
+            }
+        });
+
+
+        viewResultsButton.addEventListener("click", async () => {
+            if (viewResultsButton.hidden || viewResultsButton.disabled) return;
+
+            viewResultsButton.disabled = true;
+
+            try {
+                const available = await checkResultsAccess();
+
+                if (available) {
+                   window.location.href = new URL("results.html", window.location.href).href;
+                } else {
+                    setStatus(
+                        "WAITING FOR ADMIN",
+                        "Final results are not available yet.",
+                        "Please wait until the administrator publishes the final results."
+                    );
+                }
+            } catch (error) {
+                console.error("Results access check failed:", error);
+
+                setStatus(
+                    "RESULTS UNAVAILABLE",
+                    "We could not verify results access.",
+                    "Please try again shortly."
+                );
+            } finally {
+                viewResultsButton.disabled = false;
+            }
+        });
+
+
+        checkRoundAccess();
+        setInterval(checkRoundAccess, 3000);
+    </script>
+
+</body>
+
+</html>

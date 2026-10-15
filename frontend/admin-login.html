@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#07111f">
+
+    <title>Admin Login | CyberQuiz</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background:
+                radial-gradient(circle at 50% 35%,
+                    rgba(0, 229, 255, .09), transparent 42%),
+                #07111f;
+        }
+
+        .admin-login-container {
+            flex: 1;
+            display: grid;
+            place-items: center;
+            padding: 45px 20px;
+        }
+
+        .admin-card {
+            width: 100%;
+            max-width: 460px;
+            padding: clamp(25px, 5vw, 40px);
+            background: rgba(12, 27, 46, .96);
+            border: 1px solid rgba(0, 229, 255, .25);
+            border-radius: 18px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, .3);
+        }
+
+        .admin-icon {
+            width: 72px;
+            height: 72px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 22px;
+            border: 1px solid #00e5ff;
+            border-radius: 18px;
+            color: #00e5ff;
+            font-size: 34px;
+            box-shadow: 0 0 25px rgba(0, 229, 255, .12);
+        }
+
+        .admin-heading {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .admin-heading h1 {
+            color: #f1f6ff;
+            font-size: 29px;
+            margin-bottom: 10px;
+        }
+
+        .admin-heading h1 span {
+            color: #00e5ff;
+        }
+
+        .admin-heading p {
+            color: #9db0c8;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .security-label {
+            display: inline-block;
+            margin-bottom: 12px;
+            padding: 6px 10px;
+            border: 1px solid rgba(0, 229, 255, .25);
+            border-radius: 6px;
+            color: #00e5ff;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #d7e4f5;
+            font-size: 13px;
+            margin-bottom: 9px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 13px 14px;
+            background: #071525;
+            border: 1px solid #29415c;
+            border-radius: 8px;
+            color: #f1f6ff;
+            font: inherit;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #00e5ff;
+            box-shadow: 0 0 0 3px rgba(0, 229, 255, .08);
+        }
+
+        .password-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .password-wrapper input {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .show-password {
+            padding: 10px;
+            color: #00e5ff;
+            background: transparent;
+            border: 1px solid #29415c;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .admin-submit {
+            width: 100%;
+            padding: 14px;
+            margin-top: 5px;
+            background: #00e5ff;
+            color: #06111e;
+            border: 0;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .admin-submit:hover {
+            background: #7af2ff;
+        }
+
+        .admin-submit:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
+        .form-message {
+            display: none;
+            margin-top: 17px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .form-message.visible {
+            display: block;
+        }
+
+        .form-message.error {
+            color: #ffb4b4;
+            background: rgba(255, 80, 80, .08);
+            border: 1px solid rgba(255, 80, 80, .25);
+        }
+
+        .form-message.info {
+            color: #a8eaf2;
+            background: rgba(0, 229, 255, .06);
+            border: 1px solid rgba(0, 229, 255, .2);
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 25px;
+            text-align: center;
+            color: #9db0c8;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .back-link:hover {
+            color: #00e5ff;
+        }
+
+        .security-note {
+            margin-top: 25px;
+            padding-top: 18px;
+            border-top: 1px solid #20344a;
+            color: #8297ae;
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.7;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">⬡</span>
+                Cyber<span>Quiz</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="admin-login-container">
+        <section class="admin-card">
+
+            <div class="admin-heading">
+                <div class="admin-icon" aria-hidden="true">♙</div>
+
+                <span class="security-label">RESTRICTED ACCESS</span>
+
+                <h1>Admin <span>Portal</span></h1>
+
+                <p>
+                    Authorized event administrators only.
+                    Sign in to manage participants and quiz rounds.
+                </p>
+            </div>
+
+            <form id="adminLoginForm">
+
+                <div class="form-group">
+                    <label for="adminEmail">Admin Email</label>
+                    <input type="email" id="adminEmail" name="email" placeholder="Enter admin email"
+                        autocomplete="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="adminPassword">Admin Password</label>
+
+                    <div class="password-wrapper">
+                        <input type="password" id="adminPassword" name="password" placeholder="Enter admin password"
+                            autocomplete="current-password" required>
+
+                        <button type="button" class="show-password" id="togglePassword" aria-label="Show password">
+                            Show
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="admin-submit" id="loginButton">
+                    Secure Admin Login →
+                </button>
+
+                <div class="form-message" id="formMessage" role="status" aria-live="polite"></div>
+
+            </form>
+
+            <p class="security-note">
+                Protected admin access is not yet connected to the backend.
+                Never share your admin credentials with participants.
+            </p>
+
+            <a href="index.html" class="back-link">
+                ← Return to CyberQuiz Home
+            </a>
+
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>
+                &copy; <span id="currentYear"></span> CyberQuiz.
+                All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    ```html
+    <script>
+        document.getElementById("currentYear").textContent =
+            new Date().getFullYear();
+
+        const passwordInput = document.getElementById("adminPassword");
+        const togglePassword = document.getElementById("togglePassword");
+        const loginForm = document.getElementById("adminLoginForm");
+        const formMessage = document.getElementById("formMessage");
+        const loginButton = document.getElementById("loginButton");
+
+        togglePassword.addEventListener("click", () => {
+            const isPassword = passwordInput.type === "password";
+
+            passwordInput.type = isPassword ? "text" : "password";
+            togglePassword.textContent = isPassword ? "Hide" : "Show";
+            togglePassword.setAttribute(
+                "aria-label",
+                isPassword ? "Hide password" : "Show password"
+            );
+        });
+
+        loginForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const username = document.getElementById("adminEmail").value.trim();
+            const password = passwordInput.value;
+
+            formMessage.className = "form-message visible info";
+            formMessage.textContent = "Checking admin credentials...";
+            loginButton.disabled = true;
+
+            try {
+                const response = await fetch(
+                    "http://127.0.0.1:8000/api/admin/login",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        },
+                        body: JSON.stringify({
+                            email: username,
+                            password: password
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.detail || "Admin login failed."
+                    );
+                }
+
+                if (!data.access_token) {
+                    throw new Error(
+                        "Login response-la access token kidaikkala."
+                    );
+                }
+
+                localStorage.setItem(
+                    "cyberquiz_admin_token",
+                    data.access_token
+                );
+
+                formMessage.className = "form-message visible info";
+                formMessage.textContent =
+                    "Admin login successful! Opening dashboard...";
+
+                window.location.href = "admin-dashboard.html";
+
+            } catch (error) {
+                formMessage.className = "form-message visible error";
+
+                if (error instanceof TypeError) {
+                    formMessage.textContent =
+                        "Backend connect aagala. Backend server running-aa check pannunga.";
+                } else {
+                    formMessage.textContent = error.message;
+                }
+            } finally {
+                loginButton.disabled = false;
+            }
+        });
+    </script>
+
+</body>
+
+</html>

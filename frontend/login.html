@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050c17">
+
+    <title>Participant Login | CyberQuiz</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .login-wrapper {
+            width: min(460px, 92%);
+            margin: 65px auto;
+        }
+
+        .login-card {
+            padding: clamp(25px, 6vw, 38px);
+            background: rgba(8, 25, 42, 0.95);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-icon {
+            display: grid;
+            place-items: center;
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 20px;
+            border: 1px solid var(--cyan);
+            border-radius: 20px;
+            color: var(--cyan);
+            background: rgba(0, 229, 255, 0.07);
+            font-size: 35px;
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.08);
+        }
+
+        .login-heading {
+            text-align: center;
+        }
+
+        .login-heading h1 {
+            margin-top: 10px;
+            font-size: 30px;
+        }
+
+        .login-heading h1 span {
+            color: var(--cyan);
+        }
+
+        .login-heading p {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .login-form {
+            margin-top: 30px;
+        }
+
+        .login-form .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .login-form label {
+            color: #d5e5f4;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .login-form input {
+            width: 100%;
+            min-height: 48px;
+            padding: 12px 14px;
+            color: var(--text);
+            background: #061321;
+            border: 1px solid rgba(148, 170, 189, 0.25);
+            border-radius: 9px;
+            outline: none;
+        }
+
+        .login-form input:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.08);
+        }
+
+        .login-form input::placeholder {
+            color: #71879a;
+        }
+
+        .password-field {
+            position: relative;
+        }
+
+        .password-field input {
+            padding-right: 75px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            padding: 5px;
+            color: var(--cyan);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .login-submit {
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .login-message {
+            min-height: 20px;
+            margin-top: 15px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .login-message.error {
+            color: #ff8b9b;
+        }
+
+        .login-message.info {
+            color: var(--cyan);
+        }
+
+        .login-footer {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 229, 255, 0.12);
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .login-footer a {
+            color: var(--cyan);
+            font-weight: 700;
+        }
+
+        .back-home {
+            display: block;
+            margin-top: 22px;
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .back-home:hover {
+            color: var(--cyan);
+        }
+
+        .approval-note {
+            margin-top: 20px;
+            padding: 12px;
+            color: #b9d4e5;
+            background: rgba(0, 229, 255, 0.04);
+            border: 1px solid rgba(0, 229, 255, 0.12);
+            border-radius: 9px;
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .approval-note strong {
+            color: var(--cyan);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-grid" aria-hidden="true"></div>
+    <div class="background-glow" aria-hidden="true"></div>
+
+    <header class="navbar">
+        <a href="index.html" class="logo">
+            <span class="logo-symbol">⬡</span>
+            <span class="logo-text">
+                Cyber<span>Quiz</span>
+                <small>THINK | ANALYZE | SECURE</small>
+            </span>
+        </a>
+
+        <a href="register.html" class="btn btn-outline">
+            Register
+        </a>
+    </header>
+
+    <main class="login-wrapper">
+        <section class="login-card">
+
+            <div class="login-icon" aria-hidden="true">⬡</div>
+
+            <div class="login-heading">
+                <span class="section-label">// PARTICIPANT ACCESS</span>
+                <h1>Welcome <span>Back</span></h1>
+                <p>Sign in to continue your CyberQuiz journey.</p>
+            </div>
+
+            <form id="loginForm" class="login-form" novalidate>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your registered email"
+                        autocomplete="username" maxlength="254" required>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+
+                    <div class="password-field">
+                        <input type="password" id="password" name="password" placeholder="Enter your password"
+                            autocomplete="current-password" maxlength="128" required>
+
+                        <button type="button" class="toggle-password" id="togglePassword"
+                            data-toggle-password="password" aria-label="Show password">
+                            SHOW
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large login-submit">
+                    Secure Login →
+                </button>
+
+                <p id="loginMessage" class="login-message" role="status" aria-live="polite"></p>
+            </form>
+
+            <div class="approval-note">
+                <strong>Admin-controlled access</strong><br>
+                You can enter the quiz only after your account and
+                round access have been approved by the Admin.
+            </div>
+
+            <div class="login-footer">
+                Don't have an account?
+                <a href="register.html">Register here</a>
+            </div>
+        </section>
+
+        <a href="index.html" class="back-home">← Back to Homepage</a>
+    </main>
+
+    <script src="js/auth.js"></script>
+</body>
+
+</html>

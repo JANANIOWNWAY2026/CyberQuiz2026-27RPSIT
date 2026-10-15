@@ -1,0 +1,353 @@
+
+/* =========================================
+   CYBERQUIZ - ADMIN SHARED STYLES
+   File: frontend/css/admin.css
+   ========================================= */
+
+:root {
+    --admin-bg: #07111f;
+    --admin-panel: #0c1b2e;
+    --admin-panel-alt: #091728;
+    --admin-cyan: #00e5ff;
+    --admin-text: #f1f6ff;
+    --admin-muted: #91a5bd;
+    --admin-border: #20364e;
+    --admin-danger: #ff6b6b;
+    --admin-success: #57e6a5;
+    --admin-warning: #ffd18a;
+}
+
+/* Consistent sizing */
+
+.admin-layout *,
+.admin-card *,
+.admin-panel * {
+    box-sizing: border-box;
+}
+
+/* Shared admin containers */
+
+.admin-layout,
+.admin-card,
+.admin-panel {
+    color: var(--admin-text);
+}
+
+.admin-panel {
+    padding: 24px;
+    margin-bottom: 24px;
+    background: var(--admin-panel);
+    border: 1px solid var(--admin-border);
+    border-radius: 14px;
+}
+
+/* Shared headings */
+
+.admin-title {
+    color: var(--admin-text);
+    font-size: clamp(24px, 4vw, 34px);
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.admin-title span {
+    color: var(--admin-cyan);
+}
+
+.admin-subtitle {
+    margin-top: 8px;
+    color: var(--admin-muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* Admin badges */
+
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 7px 11px;
+    border: 1px solid var(--admin-border);
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.admin-badge--success {
+    color: var(--admin-success);
+    border-color: rgba(87, 230, 165, .3);
+    background: rgba(87, 230, 165, .08);
+}
+
+.admin-badge--warning {
+    color: var(--admin-warning);
+    border-color: rgba(255, 209, 138, .3);
+    background: rgba(255, 209, 138, .08);
+}
+
+.admin-badge--danger {
+    color: var(--admin-danger);
+    border-color: rgba(255, 107, 107, .3);
+    background: rgba(255, 107, 107, .08);
+}
+
+/* Common admin buttons */
+
+.admin-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 10px 15px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: var(--admin-cyan);
+    color: #06111e;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+.admin-button:hover {
+    background: #7af2ff;
+    transform: translateY(-1px);
+}
+
+.admin-button:focus-visible,
+.admin-input:focus-visible,
+.admin-select:focus-visible {
+    outline: 2px solid var(--admin-cyan);
+    outline-offset: 3px;
+}
+
+.admin-button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.admin-button--secondary {
+    color: var(--admin-text);
+    background: #152941;
+    border-color: #304963;
+}
+
+.admin-button--secondary:hover {
+    color: var(--admin-cyan);
+    background: #1b344d;
+}
+
+.admin-button--danger {
+    color: #fff;
+    background: #a52c3a;
+}
+
+.admin-button--danger:hover {
+    background: #c33b4a;
+}
+
+/* Shared form controls */
+
+.admin-field {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.admin-field label {
+    color: #d7e4f5;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.admin-input,
+.admin-select {
+    width: 100%;
+    min-height: 42px;
+    padding: 11px 12px;
+    color: var(--admin-text);
+    background: var(--admin-bg);
+    border: 1px solid #29415b;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 13px;
+}
+
+.admin-input::placeholder {
+    color: #71869e;
+}
+
+.admin-select option {
+    color: var(--admin-text);
+    background: var(--admin-bg);
+}
+
+/* Search and filter toolbars */
+
+.admin-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.admin-toolbar .admin-input {
+    flex: 1 1 220px;
+    width: auto;
+}
+
+.admin-toolbar .admin-select {
+    flex: 0 1 180px;
+}
+
+/* Tables */
+
+.admin-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--admin-border);
+    border-radius: 10px;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 14px;
+    border-bottom: 1px solid var(--admin-border);
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.admin-table th {
+    color: var(--admin-muted);
+    background: var(--admin-panel-alt);
+    font-size: 11px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.admin-table td {
+    color: #c8d6e7;
+}
+
+.admin-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.admin-table tbody tr:hover {
+    background: rgba(0, 229, 255, .025);
+}
+
+.admin-table .empty-state {
+    padding: 26px;
+    color: var(--admin-muted);
+    text-align: center;
+    line-height: 1.7;
+}
+
+/* Notifications */
+
+.admin-notice {
+    display: none;
+    padding: 13px 15px;
+    margin-bottom: 20px;
+    border: 1px solid var(--admin-border);
+    border-radius: 9px;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.admin-notice.is-visible {
+    display: block;
+}
+
+.admin-notice--info {
+    color: #a8eaf2;
+    border-color: rgba(0, 229, 255, .25);
+    background: rgba(0, 229, 255, .06);
+}
+
+.admin-notice--success {
+    color: var(--admin-success);
+    border-color: rgba(87, 230, 165, .25);
+    background: rgba(87, 230, 165, .06);
+}
+
+.admin-notice--error {
+    color: #ffb4b4;
+    border-color: rgba(255, 107, 107, .25);
+    background: rgba(255, 107, 107, .06);
+}
+
+/* Layout helpers */
+
+.admin-stack {
+    display: grid;
+    gap: 16px;
+}
+
+.admin-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.admin-muted {
+    color: var(--admin-muted);
+}
+
+.admin-hidden {
+    display: none !important;
+}
+
+/* Responsive layout */
+
+@media (max-width: 700px) {
+    .admin-panel {
+        padding: 17px;
+    }
+
+    .admin-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .admin-toolbar {
+        width: 100%;
+    }
+
+    .admin-toolbar .admin-input,
+    .admin-toolbar .admin-select {
+        width: 100%;
+        flex: 1 1 100%;
+    }
+}
+
+/* Respect accessibility preferences */
+
+@media (prefers-reduced-motion: reduce) {
+    .admin-button {
+        transition: none;
+    }
+
+    .admin-button:hover {
+        transform: none;
+    }
+}

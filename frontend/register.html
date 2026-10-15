@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050c17">
+
+    <title>Participant Registration | CyberQuiz</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .register-wrapper {
+            width: min(1000px, 92%);
+            margin: 55px auto;
+        }
+
+        .register-heading {
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        .register-heading h1 {
+            margin-top: 12px;
+            font-size: clamp(30px, 5vw, 44px);
+        }
+
+        .register-heading h1 span {
+            color: var(--cyan);
+        }
+
+        .register-heading p {
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .register-card {
+            padding: clamp(22px, 5vw, 42px);
+            background: rgba(8, 25, 42, 0.94);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.25);
+        }
+
+        .form-section-title {
+            margin: 26px 0 18px;
+            padding-bottom: 12px;
+            color: var(--cyan);
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .form-section-title:first-child {
+            margin-top: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            color: #d5e5f4;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .required {
+            color: var(--cyan);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            min-height: 47px;
+            padding: 12px 14px;
+            color: var(--text);
+            background: #061321;
+            border: 1px solid rgba(148, 170, 189, 0.25);
+            border-radius: 9px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.08);
+        }
+
+        .form-group input::placeholder {
+            color: #71879a;
+        }
+
+        .form-group select option {
+            color: var(--text);
+            background: #061321;
+        }
+
+        .form-help {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .terms-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 25px;
+            color: #b8cada;
+            font-size: 12px;
+        }
+
+        .terms-row input {
+            margin-top: 4px;
+            accent-color: var(--cyan);
+        }
+
+        .register-submit {
+            width: 100%;
+            margin-top: 25px;
+        }
+
+        .form-message {
+            margin-top: 16px;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .form-message.error {
+            color: #ff8b9b;
+        }
+
+        .form-message.success {
+            color: var(--green);
+        }
+
+        .register-bottom {
+            margin-top: 22px;
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .register-bottom a {
+            color: var(--cyan);
+            font-weight: 700;
+        }
+
+        @media (max-width: 600px) {
+            .register-wrapper {
+                margin: 32px auto;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .form-group.full-width {
+                grid-column: auto;
+            }
+        }
+#togglePassword,
+#toggleConfirmPassword {
+    box-shadow: 0 0 3px rgba(220, 220, 220, 0.25);
+    animation: shinyBlink 3s infinite ease-in-out;
+    transition: all 0.3s ease;
+}
+
+@keyframes shinyBlink {
+    0%, 100% {
+        box-shadow: 0 0 3px rgba(220, 220, 220, 0.2);
+        filter: brightness(0.97);
+    }
+
+    50% {
+        box-shadow:
+            0 0 5px rgba(255, 255, 255, 0.4),
+            0 0 9px rgba(200, 200, 200, 0.25);
+        filter: brightness(1.08);
+    }
+}
+
+.register-submit {
+    animation: submitShine 1.8s infinite ease-in-out;
+    transition: all 0.3s ease;
+}
+
+@keyframes submitShine {
+    0%, 100% {
+        box-shadow: 0 0 6px rgba(0, 229, 255, 0.35);
+        filter: brightness(0.95);
+    }
+
+    50% {
+        box-shadow:
+            0 0 12px rgba(0, 229, 255, 0.8),
+            0 0 25px rgba(0, 229, 255, 0.55),
+            0 0 40px rgba(0, 255, 200, 0.3);
+        filter: brightness(1.2);
+    }
+}
+
+.register-submit:hover:not(:disabled) {
+    transform: scale(1.01);
+}
+
+.register-submit:disabled {
+    animation: none;
+    cursor: not-allowed;
+}
+    </style>
+</head>
+
+<body>
+    <div class="background-grid" aria-hidden="true"></div>
+    <div class="background-glow" aria-hidden="true"></div>
+
+    <header class="navbar">
+        <a href="index.html" class="logo">
+            <span class="logo-symbol">⬡</span>
+            <span class="logo-text">
+                Cyber<span>Quiz</span>
+                <small>THINK | ANALYZE | SECURE</small>
+            </span>
+        </a>
+
+        <a href="login.html" class="btn btn-outline">
+            Already Registered? Login
+        </a>
+    </header>
+
+    <main class="register-wrapper">
+        <div class="register-heading">
+            <span class="section-label">// PARTICIPANT ENROLLMENT</span>
+            <h1>Join the <span>Challenge</span></h1>
+            <p>Enter your details accurately to register for CyberQuiz.</p>
+        </div>
+
+        <section class="register-card">
+            <form id="registerForm" novalidate>
+                <h2 class="form-section-title">01 / Personal Information</h2>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="fullName">
+                            Full Name <span class="required">*</span>
+                        </label>
+                        <input type="text" id="fullName" name="full_name" placeholder="Enter your full name"
+                            autocomplete="name" maxlength="100" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="registerNumber">
+                            Register Number <span class="required">*</span>
+                        </label>
+                        <input type="text" id="registerNumber" name="register_number"
+                            placeholder="Enter your register number" maxlength="50" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">
+                            Gender <span class="required">*</span>
+                        </label>
+                        <select id="gender" name="gender" required>
+                            <option value="">Select gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">
+                            Contact Number <span class="required">*</span>
+                        </label>
+                        <input type="tel" id="phone" name="phone" placeholder="10-digit mobile number"
+                            autocomplete="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="email">
+                            Email Address <span class="required">*</span>
+                        </label>
+                        <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email"
+                            maxlength="254" required>
+                    </div>
+                </div>
+
+                <h2 class="form-section-title">02 / College Information</h2>
+
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="college">
+                            College Name <span class="required">*</span>
+                        </label>
+                        <input type="text" id="college" name="college_name" placeholder="Enter your college name"
+                            maxlength="200" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="collegeLocation">
+                            College Location <span class="required">*</span>
+                        </label>
+                        <input type="text" id="collegeLocation" name="college_location"
+                            placeholder="City, District, State" maxlength="200" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="department">
+                            Department <span class="required">*</span>
+                        </label>
+                        <input type="text" id="department" name="department" placeholder="e.g. CSE, IT, ECE"
+                            maxlength="100" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="course">
+                            Course / Degree <span class="required">*</span>
+                        </label>
+                        <input type="text" id="course" name="course" placeholder="e.g. B.E. Computer Science"
+                            maxlength="100" required>
+                    </div>
+                </div>
+
+                <h2 class="form-section-title">03 / Account Security</h2>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="password">
+                            Create Password <span class="required">*</span>
+                        </label>
+                        <input type="password" id="password" name="password" placeholder="At least 8 characters"
+                            autocomplete="new-password" minlength="8" maxlength="128" required>
+                        <span class="form-help">
+                            Use at least 8 characters.
+                        </span>
+                        <button type="button" id="togglePassword">
+                            Show Password
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">
+                            Confirm Password <span class="required">*</span>
+                        </label>
+                        <input type="password" id="confirmPassword" name="confirm_password"
+                            placeholder="Re-enter your password" autocomplete="new-password" minlength="8"
+                            maxlength="128" required>
+                    </div>
+                </div>
+
+                <label class="terms-row" for="terms">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <span>
+                        I confirm that the details provided are correct and
+                        agree to follow the symposium quiz rules.
+                    </span>
+                </label>
+
+                <button type="submit" class="btn btn-primary btn-large register-submit">
+                    Submit Registration →
+                </button>
+
+                <p id="formMessage" class="form-message" role="status" aria-live="polite"></p>
+
+                <p class="register-bottom">
+                    Already have an account?
+                    <a href="login.html">Participant Login</a>
+                </p>
+            </form>
+        </section>
+    </main>
+    <script>
+        const registerForm = document.getElementById("registerForm");
+        const formMessage = document.getElementById("formMessage");
+
+        registerForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            formMessage.className = "form-message";
+            formMessage.textContent = "";
+
+            if (!registerForm.checkValidity()) {
+                registerForm.reportValidity();
+                return;
+            }
+
+            const password = document.getElementById("password").value;
+            const confirmPassword =
+                document.getElementById("confirmPassword").value;
+
+            if (password !== confirmPassword) {
+                formMessage.classList.add("error");
+                formMessage.textContent =
+                    "Passwords do not match. Please check again.";
+                return;
+            }
+
+            const submitButton = registerForm.querySelector(
+                'button[type="submit"]'
+            );
+
+            submitButton.disabled = true;
+            submitButton.textContent = "Submitting Registration...";
+
+            const registrationData = {
+                name: document.getElementById("fullName").value.trim(),
+                register_number: document.getElementById("registerNumber").value.trim(),
+                gender: document.getElementById("gender").value,
+                phone: document.getElementById("phone").value.trim(),
+                email: document.getElementById("email").value.trim().toLowerCase(),
+                college_name: document.getElementById("college").value.trim(),
+                college_location: document.getElementById("collegeLocation").value.trim(),
+                department: document.getElementById("department").value.trim(),
+                course: document.getElementById("course").value.trim(),
+                password: password
+            };
+
+            try {
+                const response = await fetch(
+                    "http://127.0.0.1:8000/api/auth/register",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(registrationData)
+                    }
+                );
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        typeof result.detail === "string"
+                            ? result.detail
+                            : "Registration failed. Please check your details."
+                    );
+                }
+
+                formMessage.className = "form-message success";
+                formMessage.textContent =
+                    result.message ||
+                    "Registration successful. Waiting for admin approval.";
+
+                registerForm.reset();
+
+            } catch (error) {
+                formMessage.className = "form-message error";
+                formMessage.textContent =
+                    error.message ||
+                    "Cannot connect to the backend. Please ensure the server is running.";
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = "Submit Registration →";
+            }
+        });
+        document.getElementById("togglePassword").addEventListener("click", function () {
+    const passwordInput = document.getElementById("password");
+
+    passwordInput.type =
+        passwordInput.type === "password" ? "text" : "password";
+
+    this.textContent =
+        passwordInput.type === "password" ? "Show Password" : "Hide Password";
+});
+
+document.getElementById("toggleConfirmPassword").addEventListener("click", function () {
+    const confirmInput = document.getElementById("confirmPassword");
+
+    confirmInput.type =
+        confirmInput.type === "password" ? "text" : "password";
+
+    this.textContent =
+        confirmInput.type === "password" ? "Show Password" : "Hide Password";
+});
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050d19">
+    <meta name="description" content="CyberQuiz - Cybersecurity Symposium Challenge">
+
+    <title>CyberQuiz | Think. Analyze. Secure.</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- Background Effects -->
+    <div class="background-grid" aria-hidden="true"></div>
+    <div class="background-glow" aria-hidden="true"></div>
+
+    <!-- Navigation -->
+    <header class="navbar">
+        <a href="index.html" class="logo">
+            <span class="logo-symbol">⬡</span>
+            <span class="logo-text">
+                Cyber<span>Quiz</span>
+                <small>THINK | ANALYZE | SECURE</small>
+            </span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="#home" class="active">Home</a>
+            <a href="#about">About</a>
+            <a href="#rules">Rules</a>
+            <a href="#levels">Levels</a>
+        </nav>
+
+        <div class="nav-actions">
+            <a href="login.html" class="btn btn-outline">
+                Participant Login
+            </a>
+
+            <a href="admin-login.html" class="btn btn-primary btn-small">
+                Admin Portal
+            </a>
+        </div>
+
+        <button class="menu-toggle" id="menuToggle"
+                aria-label="Toggle navigation" aria-expanded="false">
+            ☰
+        </button>
+    </header>
+
+
+    <!-- Hero -->
+    <main>
+
+        <section class="hero section-container" id="home">
+
+            <div class="hero-content">
+
+                <div class="eyebrow">
+                    <span class="live-dot"></span>
+                    CYBERSECURITY SYMPOSIUM
+                </div>
+
+                <h1>
+                    Are You Ready to
+                    <span class="gradient-text">
+                        Think Like a Hacker?
+                    </span>
+                </h1>
+
+                <p class="hero-description">
+                    Enter the world of cybersecurity challenges.
+                    Test your knowledge, analyze threats and prove
+                    your skills across three competitive levels.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="register.html" class="btn btn-primary btn-large">
+                        Register Now <span>→</span>
+                    </a>
+
+                    <a href="login.html" class="btn btn-outline btn-large">
+                        Participant Login
+                    </a>
+                </div>
+
+                <p class="access-notice">
+                    <span>▣</span>
+                    Quiz access requires Admin approval.
+                </p>
+
+                <div class="hero-tags">
+                    <span>Cyber Defense</span>
+                    <span>Threat Analysis</span>
+                    <span>Expert Challenges</span>
+                </div>
+
+            </div>
+
+            <!-- Cyber Visual -->
+            <div class="hero-visual" aria-hidden="true">
+
+                <div class="orbit orbit-one"></div>
+                <div class="orbit orbit-two"></div>
+
+                <div class="cyber-panel panel-top">
+                    <span>SECURITY STATUS</span>
+                    <strong>PROTECTED</strong>
+                </div>
+
+                <div class="shield-container">
+                    <div class="shield">
+                        <span class="shield-lock">▣</span>
+                    </div>
+                    <div class="shield-ring"></div>
+                </div>
+
+                <div class="cyber-panel panel-bottom">
+                    <span>THREAT DETECTION</span>
+                    <strong>● SYSTEM READY</strong>
+                </div>
+
+                <div class="floating-code code-left">
+                    01001010<br>
+                    ACCESS_GRANTED<br>
+                    ENCRYPTION_ACTIVE
+                </div>
+
+                <div class="floating-code code-right">
+                    FIREWALL: ON<br>
+                    NETWORK: SECURE<br>
+                    MODE: DEFENSE
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Statistics -->
+        <section class="stats-bar section-container" id="about">
+
+            <div class="stat-item">
+                <span class="stat-icon">♙</span>
+                <div>
+                    <strong>03</strong>
+                    <span>CHALLENGE LEVELS</span>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <span class="stat-icon">◎</span>
+                <div>
+                    <strong>35</strong>
+                    <span>TOTAL QUESTIONS</span>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <span class="stat-icon">◷</span>
+                <div>
+                    <strong>24:10</strong>
+                    <span>TOTAL QUIZ TIME</span>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <span class="stat-icon">♜</span>
+                <div>
+                    <strong>30–40</strong>
+                    <span>EXPECTED PARTICIPANTS</span>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <span class="stat-icon">⬡</span>
+                <div>
+                    <strong>ADMIN</strong>
+                    <span>CONTROLLED ACCESS</span>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- Quiz Levels -->
+        <section class="levels-section section-container" id="levels">
+
+            <div class="section-heading">
+                <div>
+                    <span class="section-label">// THE CHALLENGE</span>
+                    <h2>Three Levels. <span>One Mission.</span></h2>
+                    <p>
+                        Every round raises the difficulty.
+                        Complete all three to prove your skills.
+                    </p>
+                </div>
+
+                <a href="#rules" class="btn btn-outline">
+                    View Rules →
+                </a>
+            </div>
+
+            <div class="level-grid">
+
+                <article class="level-card level-one">
+                    <div class="level-card-top">
+                        <span class="level-number">01</span>
+                        <span class="level-status">LEVEL 1</span>
+                    </div>
+
+                    <h3>Advanced</h3>
+                    <p>Build your edge. Analyze the challenge.</p>
+
+                    <div class="level-details">
+                        <div>
+                            <span>Questions</span>
+                            <strong>15</strong>
+                        </div>
+                        <div>
+                            <span>Time Limit</span>
+                            <strong>12:30</strong>
+                        </div>
+                    </div>
+
+                    <div class="difficulty-track">
+                        <span></span>
+                    </div>
+
+                    <p class="level-footer">FOUNDATION TO ADVANCED</p>
+                </article>
+
+
+                <article class="level-card level-two">
+                    <div class="level-card-top">
+                        <span class="level-number">02</span>
+                        <span class="level-status">LEVEL 2</span>
+                    </div>
+
+                    <h3>Very Hard</h3>
+                    <p>Think critically. Solve complex scenarios.</p>
+
+                    <div class="level-details">
+                        <div>
+                            <span>Questions</span>
+                            <strong>10</strong>
+                        </div>
+                        <div>
+                            <span>Time Limit</span>
+                            <strong>06:40</strong>
+                        </div>
+                    </div>
+
+                    <div class="difficulty-track">
+                        <span></span>
+                    </div>
+
+                    <p class="level-footer">ADVANCED TO EXPERT</p>
+                </article>
+
+
+                <article class="level-card level-three">
+                    <div class="level-card-top">
+                        <span class="level-number">03</span>
+                        <span class="level-status">LEVEL 3</span>
+                    </div>
+
+                    <h3>Extreme Expert</h3>
+                    <p>Face the ultimate cybersecurity test.</p>
+
+                    <div class="level-details">
+                        <div>
+                            <span>Questions</span>
+                            <strong>10</strong>
+                        </div>
+                        <div>
+                            <span>Time Limit</span>
+                            <strong>05:00</strong>
+                        </div>
+                    </div>
+
+                    <div class="difficulty-track">
+                        <span></span>
+                    </div>
+
+                    <p class="level-footer">EXPERT CHALLENGE</p>
+                </article>
+
+            </div>
+
+            <p class="level-note">
+                All level timings are total level countdowns, not per-question timers.
+            </p>
+
+        </section>
+
+
+        <!-- Rules -->
+        <section class="rules-section section-container" id="rules">
+
+            <div class="rules-panel">
+
+                <span class="section-label">// PARTICIPANT GUIDE</span>
+                <h2>Mission <span>Rules</span></h2>
+
+                <ul class="rules-list">
+                    <li>
+                        <span class="rule-number">01</span>
+                        Register using your correct participant details.
+                    </li>
+                    <li>
+                        <span class="rule-number">02</span>
+                        Only Admin-approved participants can access the quiz.
+                    </li>
+                    <li>
+                        <span class="rule-number">03</span>
+                        Each level has a fixed total countdown timer.
+                    </li>
+                    <li>
+                        <span class="rule-number">04</span>
+                        Submitting a level returns you to the waiting page.
+                    </li>
+                    <li>
+                        <span class="rule-number">05</span>
+                        The Admin must unlock access to the next level.
+                    </li>
+                    <li>
+                        <span class="rule-number">06</span>
+                        Scores and correct answers are reserved for the Admin.
+                    </li>
+                </ul>
+
+            </div>
+
+
+            <div class="challenge-panel">
+                <div class="challenge-decoration">⬡</div>
+
+                <span class="section-label">YOUR MISSION STARTS HERE</span>
+                <h2>Ready to Test<br>Your <span>Cyber Skills?</span></h2>
+
+                <p>
+                    Register for the symposium and wait for
+                    Admin approval to access the challenge.
+                </p>
+
+                <a href="register.html" class="btn btn-primary btn-large">
+                    Get Started →
+                </a>
+
+                <div class="challenge-footer">
+                    THINK SMART · STAY SECURE
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <a href="index.html" class="logo">
+            <span class="logo-symbol">⬡</span>
+            <span class="logo-text">
+                Cyber<span>Quiz</span>
+                <small>THINK | ANALYZE | SECURE</small>
+            </span>
+        </a>
+
+        <p>Cybersecurity Symposium Challenge Platform</p>
+
+        <span class="copyright">
+            © 2026 CyberQuiz. All rights reserved.
+        </span>
+        <span class="copyright">
+            © 2026 ADMIN JANANI AMMA C. RPSIT CYBERQUIZ.
+        </span>
+    </footer>
+
+
+    <script src="js/app.js"></script>
+
+</body>
+</html>
+

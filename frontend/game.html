@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#07111f">
+    <meta name="description" content="CyberQuiz cybersecurity challenge">
+
+    <title>CyberQuiz | Quiz Game</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .game-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .game-card {
+            padding: 30px;
+            background: rgba(12, 27, 46, 0.95);
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            border-radius: 18px;
+            box-shadow: 0 0 35px rgba(0, 229, 255, 0.07);
+        }
+
+        .game-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .game-level {
+            color: #00e5ff;
+            font-weight: 700;
+        }
+
+        .game-timer {
+            color: #f3f8ff;
+            font-size: 22px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-warning {
+            color: #ff6262 !important;
+        }
+
+        .game-progress-text {
+            color: #a9bad0;
+            margin-bottom: 10px;
+        }
+
+        .game-progress-track {
+            width: 100%;
+            height: 8px;
+            overflow: hidden;
+            background: #1b3047;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .game-progress-bar {
+            width: 0;
+            height: 100%;
+            background: #00e5ff;
+            border-radius: 20px;
+            transition: width 0.25s ease;
+        }
+
+        .game-question {
+            color: #f3f8ff;
+            font-size: clamp(20px, 3vw, 27px);
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 14px;
+        }
+
+        .quiz-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 17px;
+            color: #dceaff;
+            background: rgba(7, 17, 31, 0.75);
+            border: 1px solid #29435e;
+            border-radius: 10px;
+            cursor: pointer;
+            line-height: 1.6;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .quiz-option:hover {
+            border-color: #00e5ff;
+        }
+
+        .quiz-option.selected {
+            border-color: #00e5ff;
+            background: rgba(0, 229, 255, 0.09);
+        }
+
+        .quiz-option input {
+            margin-top: 5px;
+            accent-color: #00e5ff;
+            flex-shrink: 0;
+        }
+
+        .game-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .game-actions button {
+            padding: 12px 24px;
+            color: #07111f;
+            background: #00e5ff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .game-actions button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .game-note {
+            margin-top: 20px;
+            color: #8094ab;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 600px) {
+            .game-card {
+                padding: 22px 16px;
+            }
+
+            .game-actions button {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <script src="js/game.js" defer></script>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">⬡</span>
+                Cyber<span>Quiz</span>
+            </a>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="waiting.html">Waiting Room</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="game-container">
+        <section class="game-card">
+
+            <div class="game-top">
+                <div id="levelText" class="game-level">
+                    Level 1
+                </div>
+
+                <div>
+                    <span>Time: </span>
+                    <span id="timer" class="game-timer">00:25</span>
+                </div>
+            </div>
+
+            <p id="progressText" class="game-progress-text">
+                Question 1 of 15
+            </p>
+
+            <div
+                class="game-progress-track"
+                role="progressbar"
+                aria-label="Quiz progress"
+                aria-valuemin="0"
+                aria-valuemax="100"
+            >
+                <div id="progressBar" class="game-progress-bar"></div>
+            </div>
+
+            <h1 id="questionText" class="game-question">
+                Loading question...
+            </h1>
+
+            <div id="optionsContainer" class="quiz-options">
+                <!-- Options are generated by js/game.js -->
+            </div>
+
+            <div class="game-actions">
+                <button id="previousButton" type="button" hidden disabled>
+                    Previous
+                </button>
+
+                <button id="nextButton" type="button">
+                    Save &amp; Next
+                </button>
+            </div>
+
+            <p class="game-note">
+                Select one answer before continuing. Your quiz currently
+                uses the local demo question bank.
+            </p>
+
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>
+                &copy; <span id="currentYear"></span> CyberQuiz.
+                All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById("currentYear").textContent =
+            new Date().getFullYear();
+    </script>
+
+<script src="js/exam_guard.js"></script>
+
+
+</body>
+</html>

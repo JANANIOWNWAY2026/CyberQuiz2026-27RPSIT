@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#07111f">
+
+    <title>Level Submitted | CyberQuiz</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background:
+                radial-gradient(circle at 50% 35%,
+                    rgba(0, 229, 255, .09), transparent 42%),
+                #07111f;
+        }
+
+        .result-container {
+            flex: 1;
+            display: grid;
+            place-items: center;
+            padding: 45px 20px;
+        }
+
+        .result-card {
+            width: 100%;
+            max-width: 620px;
+            padding: clamp(25px, 5vw, 45px);
+            text-align: center;
+            background: rgba(12, 27, 46, .95);
+            border: 1px solid rgba(0, 229, 255, .25);
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, .25);
+        }
+
+        .success-icon {
+            width: 95px;
+            height: 95px;
+            margin: 0 auto 25px;
+            display: grid;
+            place-items: center;
+            border: 2px solid #00e5ff;
+            border-radius: 50%;
+            color: #00e5ff;
+            font-size: 45px;
+            box-shadow: 0 0 30px rgba(0, 229, 255, .13);
+        }
+
+        .result-card h1 {
+            color: #f1f6ff;
+            font-size: clamp(27px, 5vw, 37px);
+            margin-bottom: 15px;
+        }
+
+        .result-card h1 span {
+            color: #00e5ff;
+        }
+
+        .description {
+            color: #a9bad0;
+            line-height: 1.8;
+        }
+
+        .submission-status {
+            margin: 28px 0 20px;
+            padding: 20px;
+            border: 1px solid rgba(0, 229, 255, .2);
+            background: rgba(0, 229, 255, .05);
+            border-radius: 12px;
+        }
+
+        .status-label {
+            color: #8fa6bf;
+            font-size: 12px;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .status-value {
+            color: #00e5ff;
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+        .privacy-note {
+            margin: 20px 0;
+            color: #91a4ba;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .result-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .result-actions a {
+            text-decoration: none;
+        }
+
+        .secondary-link {
+            padding: 12px 22px;
+            color: #dceaff;
+            border: 1px solid #29435e;
+            border-radius: 8px;
+        }
+
+        .secondary-link:hover {
+            color: #00e5ff;
+            border-color: #00e5ff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">⬡</span>
+                Cyber<span>Quiz</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="result-container">
+        <section class="result-card">
+
+            <div class="success-icon" aria-hidden="true">✓</div>
+
+            <h1>Level <span>Submitted</span></h1>
+
+            <p class="description">
+                Thank you for participating in the CyberQuiz challenge.
+                Your level submission status will be confirmed by the quiz server.
+            </p>
+
+            <div class="submission-status">
+                <p class="status-label">SUBMISSION STATUS</p>
+                <p class="status-value" id="submissionStatus">
+                    AWAITING SERVER CONFIRMATION
+                </p>
+            </div>
+
+            <p class="privacy-note">
+                Your score and detailed results are handled securely.
+                Correct answers are not displayed here. Please wait until
+                the administrator authorizes access to the next level.
+            </p>
+
+            <div class="result-actions">
+                <a href="waiting.html" class="btn btn-primary">
+                    Go to Waiting Room
+                </a>
+
+                <a href="index.html" class="secondary-link">
+                    Back to Home
+                </a>
+            </div>
+
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>
+                &copy; <span id="currentYear"></span> CyberQuiz.
+                All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+
+    <script>
+        document.getElementById("currentYear").textContent =
+            new Date().getFullYear();
+
+        const API_BASE = "http://127.0.0.1:8000";
+        const token = sessionStorage.getItem("cyberquiz_access_token");
+
+        const resultCard = document.querySelector(".result-card");
+
+        async function loadFinalResults() {
+            if (!token) {
+                window.location.replace("login.html");
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `${API_BASE}/api/leaderboard`,
+                    {
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Accept": "application/json"
+                        },
+                        cache: "no-store"
+                    }
+                );
+
+                if (response.status === 401) {
+                    sessionStorage.removeItem("cyberquiz_access_token");
+                    window.location.replace("login.html");
+                    return;
+                }
+
+                if (!response.ok) {
+                    document.querySelector(".result-card h1").textContent =
+                        "Results Not Available";
+
+                    document.querySelector(".description").textContent =
+                        "Complete Level 3 and wait until the administrator publishes the final results.";
+
+                    document.getElementById("submissionStatus").textContent =
+                        "WAITING FOR ADMIN ACCESS";
+
+                    return;
+                }
+
+                const data = await response.json();
+
+                document.querySelector(".result-card h1").textContent =
+                    "Final Leaderboard";
+
+                document.querySelector(".description").textContent =
+                    "Your final results are now available.";
+
+                document.getElementById("submissionStatus").textContent =
+                    "FINAL RESULTS PUBLISHED";
+
+                const oldTable = document.getElementById("leaderboardSection");
+                if (oldTable) oldTable.remove();
+
+                const section = document.createElement("section");
+                section.id = "leaderboardSection";
+                section.style.marginTop = "25px";
+
+                const heading = document.createElement("h2");
+                heading.textContent = "Leaderboard";
+                heading.style.color = "#00e5ff";
+                section.appendChild(heading);
+
+                const table = document.createElement("table");
+                table.style.width = "100%";
+                table.style.marginTop = "15px";
+                table.style.borderCollapse = "collapse";
+                table.style.color = "#f1f6ff";
+
+                const headers = [
+                    "Rank", "Participant", "Register No.",
+                    "Level", "Score", "Duration"
+                ];
+
+                const thead = document.createElement("thead");
+                const headerRow = document.createElement("tr");
+
+                headers.forEach(label => {
+                    const th = document.createElement("th");
+                    th.textContent = label;
+                    th.style.padding = "10px 6px";
+                    th.style.borderBottom = "1px solid #29435e";
+                    headerRow.appendChild(th);
+                });
+
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                const tbody = document.createElement("tbody");
+
+                const leaderboard = Array.isArray(data)
+                    ? data
+                    : Array.isArray(data.leaderboard)
+                        ? data.leaderboard
+                        : Array.isArray(data.results)
+                            ? data.results
+                            : [];
+
+                if (leaderboard.length === 0) {
+                    const row = document.createElement("tr");
+                    const cell = document.createElement("td");
+
+                    cell.colSpan = 6;
+                    cell.textContent = "No published leaderboard results available.";
+                    row.appendChild(cell);
+                    tbody.appendChild(row);
+                }
+
+                leaderboard.forEach(item => {
+                    const row = document.createElement("tr");
+
+                    const values = [
+                        item.rank,
+                        item.name,
+                        "—",
+                        "All Levels",
+                        `${item.total_correct}/${item.total_questions}`,
+                        item.total_time_seconds == null
+                            ? "—"
+                            : `${item.total_time_seconds}s`
+                    ];
+
+                    values.forEach(value => {
+                        const td = document.createElement("td");
+                        td.textContent = value ?? "—";
+                        td.style.padding = "10px 6px";
+                        td.style.borderBottom = "1px solid #29435e";
+                        row.appendChild(td);
+                    });
+
+                    tbody.appendChild(row);
+                });
+
+                table.appendChild(tbody);
+                section.appendChild(table);
+
+                resultCard.appendChild(section);
+
+                document.querySelector(".privacy-note").textContent =
+                    "Final results have been published by the administrator.";
+
+            } catch (error) {
+                console.error("Unable to load final results:", error);
+
+                document.getElementById("submissionStatus").textContent =
+                    "CONNECTION ERROR";
+            }
+        }
+
+        loadFinalResults();
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#07111f">
+
+    <title>Admin Dashboard | CyberQuiz</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+
+    <style>
+        body {
+            min-height: 100vh;
+            background: #07111f;
+        }
+
+        .admin-layout {
+            width: min(1400px, 96%);
+            margin: 30px auto 50px;
+        }
+
+        .dashboard-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .dashboard-heading h1 {
+            color: #f1f6ff;
+            font-size: clamp(25px, 4vw, 34px);
+            margin-bottom: 8px;
+        }
+
+        .dashboard-heading h1 span {
+            color: #00e5ff;
+        }
+
+        .muted {
+            color: #91a5bd;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .demo-badge {
+            padding: 8px 12px;
+            color: #ffd18a;
+            border: 1px solid rgba(255, 190, 80, .35);
+            background: rgba(255, 190, 80, .07);
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card,
+        .panel {
+            background: #0c1b2e;
+            border: 1px solid #20364e;
+            border-radius: 14px;
+        }
+
+        .metric-card {
+            padding: 22px;
+        }
+
+        .metric-label {
+            color: #91a5bd;
+            font-size: 12px;
+            margin-bottom: 13px;
+        }
+
+        .metric-value {
+            color: #f1f6ff;
+            font-size: 30px;
+            font-weight: 800;
+        }
+
+        .metric-detail {
+            margin-top: 8px;
+            color: #00e5ff;
+            font-size: 12px;
+        }
+
+        .panel {
+            padding: 24px;
+            margin-bottom: 24px;
+            min-width: 0;
+        }
+
+        .panel-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .panel-heading h2 {
+            color: #f1f6ff;
+            font-size: 19px;
+        }
+
+        .panel-heading p {
+            margin-top: 7px;
+        }
+
+        .round-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .round-card {
+            padding: 20px;
+            background: #091728;
+            border: 1px solid #29415b;
+            border-radius: 12px;
+        }
+
+        .round-card h3 {
+            color: #00e5ff;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .round-card p {
+            color: #9db0c8;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .round-card button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 12px;
+            border: 0;
+            border-radius: 7px;
+            color: #06111e;
+            background: #00e5ff;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .round-card button:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+        .round-card button.lock-button {
+            background: #243950;
+            color: #dceaff;
+            border: 1px solid #39536e;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 720px;
+            text-align: left;
+        }
+
+        th,
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #20344a;
+            font-size: 13px;
+            color: #c8d6e7;
+        }
+
+        th {
+            color: #91a5bd;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .status.pending {
+            color: #ffd18a;
+            background: rgba(255, 190, 80, .1);
+        }
+
+        .status.approved {
+            color: #8cf5c3;
+            background: rgba(65, 220, 150, .1);
+        }
+
+        .status.waiting {
+            color: #a8eaf2;
+            background: rgba(0, 229, 255, .08);
+        }
+
+        .small-button {
+            padding: 7px 10px;
+            color: #06111e;
+            background: #00e5ff;
+            border: 0;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .small-button.reject {
+            margin-left: 5px;
+            color: #ffb4b4;
+            background: rgba(255, 80, 80, .12);
+            border: 1px solid rgba(255, 80, 80, .3);
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar input,
+        .toolbar select {
+            padding: 10px 12px;
+            max-width: 100%;
+            color: #dceaff;
+            background: #071525;
+            border: 1px solid #29415b;
+            border-radius: 7px;
+        }
+
+        .notice {
+            display: none;
+            padding: 14px;
+            margin-bottom: 20px;
+            border-radius: 9px;
+            color: #a8eaf2;
+            background: rgba(0, 229, 255, .06);
+            border: 1px solid rgba(0, 229, 255, .2);
+            line-height: 1.6;
+            font-size: 13px;
+        }
+
+        .notice.visible {
+            display: block;
+        }
+
+        .empty-row {
+            padding: 25px;
+            color: #91a5bd;
+            text-align: center;
+        }
+
+        .danger-link {
+            color: #ffb4b4;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        @media (max-width: 900px) {
+            .admin-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .round-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .panel {
+                padding: 17px;
+            }
+        }
+
+        .approval-status {
+            display: inline-block;
+            padding: 4px 9px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .approval-status.pending {
+            color: #fbbf24;
+            background: rgba(251, 191, 36, 0.10);
+            animation: pendingGlow 1.5s ease-in-out infinite;
+        }
+
+        .approval-status.approved {
+            color: #34d399;
+            background: rgba(52, 211, 153, 0.12);
+        }
+
+        @keyframes pendingGlow {
+            50% {
+                box-shadow: 0 0 8px rgba(251, 191, 36, 0.45);
+            }
+        }
+
+        /* ===== CYBERQUIZ PREMIUM ADMIN THEME ===== */
+
+        :root {
+            --neon-cyan: #00e5ff;
+            --neon-violet: #9b7bff;
+            --neon-green: #39f5a5;
+            --neon-amber: #ffc857;
+            --neon-red: #ff647c;
+            --panel-bg: #0c1b2e;
+            --panel-border: #244360;
+        }
+
+        /* Smooth dashboard interactions */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        button,
+        input,
+        select,
+        a {
+            transition:
+                background .25s ease,
+                color .25s ease,
+                border-color .25s ease,
+                box-shadow .25s ease,
+                transform .25s ease;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        a:focus-visible {
+            outline: 2px solid var(--neon-cyan);
+            outline-offset: 3px;
+        }
+
+        /* Premium cards */
+        .metric-card,
+        .panel,
+        .round-card {
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, .18);
+        }
+
+        .metric-card,
+        .round-card {
+            transition: transform .25s ease, border-color .25s ease,
+                box-shadow .25s ease;
+        }
+
+        .metric-card:hover,
+        .round-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 10px 30px rgba(0, 229, 255, .12);
+        }
+
+        .metric-value {
+            text-shadow: 0 0 18px rgba(0, 229, 255, .18);
+        }
+
+        .round-card h3 {
+            text-shadow: 0 0 12px rgba(0, 229, 255, .25);
+        }
+
+        /* Round Start buttons */
+        .round-card button[data-start-level],
+        .round-card button[data-unlock-level] {
+            color: #03121d;
+            background: linear-gradient(110deg, #00e5ff, #70f7e8);
+            box-shadow: 0 0 12px rgba(0, 229, 255, .18);
+        }
+
+        .round-card button[data-start-level]:hover:not(:disabled),
+        .round-card button[data-unlock-level]:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 22px rgba(0, 229, 255, .45);
+        }
+
+        /* Premium Silver-Grey End Level Buttons */
+        .round-card button[data-end-level] {
+            color: #ffffff;
+            background: linear-gradient(120deg,
+                    #374151,
+                    #6b7280,
+                    #374151);
+            background-size: 200% 200%;
+            border: 1px solid #9ca3af;
+            border-radius: 10px;
+            box-shadow: 0 0 8px rgba(209, 213, 219, 0.15);
+            animation:
+                endButtonGlow 3s ease-in-out infinite,
+                endButtonShimmer 6s ease infinite;
+        }
+
+        @keyframes endButtonGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 5px rgba(209, 213, 219, 0.15);
+            }
+
+            50% {
+                box-shadow:
+                    0 0 10px rgba(229, 231, 235, 0.55),
+                    0 0 18px rgba(156, 163, 175, 0.25);
+            }
+        }
+
+        @keyframes endButtonShimmer {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .round-card button[data-end-level]:hover:not(:disabled) {
+            transform: translateY(-2px);
+            border-color: #e5e7eb;
+            box-shadow: 0 0 16px rgba(209, 213, 219, 0.4);
+        }
+
+        .round-card button[data-end-level]:disabled {
+            animation: none;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .round-card button[data-end-level] {
+                animation: none;
+            }
+        }
+
+        /* Soft blinking neon glow */
+        @keyframes endButtonGlow {
+
+            0%,
+            100% {
+                box-shadow:
+                    0 0 6px rgba(100, 120, 255, 0.30),
+                    0 0 12px rgba(70, 110, 255, 0.15);
+            }
+
+            50% {
+                box-shadow:
+                    0 0 12px rgba(130, 150, 255, 0.80),
+                    0 0 26px rgba(70, 130, 255, 0.45);
+            }
+        }
+
+        /* Slow-moving gradient */
+        @keyframes endButtonShimmer {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Hover effect */
+        .round-card button[data-end-level]:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.02);
+            border-color: #c3ceff;
+            box-shadow:
+                0 0 15px rgba(130, 150, 255, 0.9),
+                0 0 32px rgba(70, 130, 255, 0.55);
+        }
+
+        /* Disabled button should not blink */
+        .round-card button[data-end-level]:disabled {
+            animation: none;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Respect reduced-motion settings */
+        @media (prefers-reduced-motion: reduce) {
+            .round-card button[data-end-level] {
+                animation: none;
+            }
+        }
+
+
+        /* Disabled controls */
+        button:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
+        /* Table hover interaction */
+        tbody tr {
+            transition: background .2s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(0, 229, 255, .045);
+        }
+
+        th {
+            background: rgba(0, 229, 255, .035);
+        }
+
+        td {
+            vertical-align: middle;
+        }
+
+        /* Approval status badges */
+        .approval-status.pending,
+        .status.pending {
+            color: #ffe09a;
+            border: 1px solid rgba(255, 200, 87, .3);
+            background: rgba(255, 200, 87, .09);
+            animation: pendingPulse 2s ease-in-out infinite;
+        }
+
+        .approval-status.approved,
+        .status.approved {
+            color: #8affc9;
+            border: 1px solid rgba(57, 245, 165, .3);
+            background: rgba(57, 245, 165, .09);
+        }
+
+        /* Approval action buttons */
+        #participantTable button,
+        #participantsTable button,
+        #participantTableBody button {
+            margin: 4px 3px;
+            padding: 8px 11px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 800;
+            border: 1px solid rgba(0, 229, 255, .35);
+            color: #9cf7ff;
+            background: rgba(0, 229, 255, .09);
+        }
+
+        #participantTable button:hover,
+        #participantsTable button:hover,
+        #participantTableBody button:hover {
+            color: #06111e;
+            background: var(--neon-cyan);
+            box-shadow: 0 0 14px rgba(0, 229, 255, .25);
+            transform: translateY(-1px);
+        }
+
+        /* Revoke / reject buttons */
+        button.reject,
+        #participantTable button.reject,
+        #participantsTable button.reject,
+        #participantTableBody button.reject {
+            color: #ffb4c0;
+            border-color: rgba(255, 100, 124, .4);
+            background: rgba(255, 100, 124, .09);
+        }
+
+        button.reject:hover,
+        #participantTable button.reject:hover,
+        #participantsTable button.reject:hover,
+        #participantTableBody button.reject:hover {
+            color: white;
+            background: #d93655;
+        }
+
+        /* Search and filter controls */
+        .toolbar input,
+        .toolbar select {
+            min-height: 40px;
+            outline: none;
+        }
+
+        .toolbar input:focus,
+        .toolbar select:focus {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 14px rgba(0, 229, 255, .13);
+        }
+
+        /* Leaderboard action buttons */
+        #publishLeaderboardButton {
+            color: #06111e;
+            background: linear-gradient(110deg, #39f5a5, #00e5ff);
+            box-shadow: 0 0 12px rgba(57, 245, 165, .15);
+        }
+
+        #hideLeaderboardButton {
+            color: #ffb4c0;
+            background: rgba(255, 100, 124, .09);
+            border: 1px solid rgba(255, 100, 124, .4);
+        }
+
+        #publishLeaderboardButton:hover,
+        #hideLeaderboardButton:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.12);
+        }
+
+        /* Subtle pending animation */
+        @keyframes pendingPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 rgba(255, 200, 87, 0);
+            }
+
+            50% {
+                box-shadow: 0 0 10px rgba(255, 200, 87, .18);
+            }
+        }
+
+        /* Respect reduced-motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">⬡</span>
+                Cyber<span>Quiz</span>
+            </a>
+
+            <a href="admin-login.html" class="danger-link">Admin Login</a>
+        </div>
+    </header>
+
+    <main class="admin-layout">
+
+        <section class="dashboard-heading">
+            <div>
+                <h1>Admin <span>Dashboard</span></h1>
+                <p class="muted">
+                    Manage registrations, rounds, and event monitoring.
+                </p>
+            </div>
+
+            <span class="demo-badge" id="adminAuthStatus">CHECKING AUTHENTICATION...</span>
+        </section>
+
+        <div class="notice" id="notice" role="status" aria-live="polite"></div>
+
+        <section class="admin-grid" aria-label="Event overview">
+
+            <article class="metric-card">
+                <p class="metric-label">REGISTERED PARTICIPANTS</p>
+                <p class="metric-value" id="registeredCount">0</p>
+                <p class="metric-detail">Awaiting backend data</p>
+            </article>
+
+            <article class="metric-card">
+                <p class="metric-label">PENDING APPROVALS</p>
+                <p class="metric-value" id="pendingCount">0</p>
+                <p class="metric-detail">Awaiting backend data</p>
+            </article>
+
+            <article class="metric-card">
+                <p class="metric-label">ACTIVE ROUND</p>
+                <p class="metric-value" id="activeRound">None</p>
+                <p class="metric-detail">Admin unlock required</p>
+            </article>
+
+            <article class="metric-card">
+                <p class="metric-label">COMPLETED LEVELS</p>
+                <p class="metric-value" id="completedCount">0</p>
+                <p class="metric-detail">Awaiting backend data</p>
+            </article>
+
+        </section>
+
+
+        <section class="panel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Round Access Control</h2>
+                    <p class="muted">
+                        Start or end each quiz round using authenticated admin controls.
+                    </p>
+                </div>
+            </div>
+
+            <div class="round-grid">
+
+                <article class="round-card">
+                    <h3>LEVEL 1</h3>
+                    <p>15 questions</p>
+
+                    <p>50 seconds per question</p>
+                    <p>Total: 12 minutes 30 seconds</p>
+
+                    <p>Round status: <strong data-round-status="1">CHECKING...</strong></p>
+
+                    <button type="button" data-start-level="1">
+                        Start Level 1
+                    </button>
+                    <button type="button" class="lock-button" data-end-level="1">
+                        End Level 1
+                    </button>
+                </article>
+
+                <article class="round-card">
+                    <h3>LEVEL 2</h3>
+                    <p>10 questions</p>
+
+
+                    <p>40 seconds per question</p>
+                    <p>Total: 6 minutes 40 seconds</p>
+
+                    <p>Round status: <strong data-round-status="2">CHECKING...</strong></p>
+
+                    <button type="button" data-start-level="2">
+                        Start Level 2
+                    </button>
+                    <button type="button" class="lock-button" data-end-level="2">
+                        End Level 2
+                    </button>
+                </article>
+
+                <article class="round-card">
+                    <h3>LEVEL 3</h3>
+                    <p>10 questions</p>
+
+                    <p>30 seconds per question</p>
+                    <p>Total: 5 minutes</p>
+
+                    <p>Round status: <strong data-round-status="3">CHECKING...</strong></p>
+
+                    <button type="button" data-start-level="3">
+                        Start Level 3
+                    </button>
+                    <button type="button" class="lock-button" data-end-level="3">
+                        End Level 3
+                    </button>
+                </article>
+
+            </div>
+
+            <p class="muted" style="margin-top:18px;">
+                Admin controls manage round availability. Each participant's quiz timer
+                starts only when that participant starts their quiz.
+            </p>
+        </section>
+
+        <section class="panel" id="finalLeaderboardPanel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Final Leaderboard</h2>
+                    <p class="muted">
+                        Publish final results only after the quiz event is complete.
+                    </p>
+                </div>
+            </div>
+
+            <p id="leaderboardPublishStatus" class="muted" role="status" aria-live="polite">
+                Checking publication status...
+            </p>
+
+            <div class="toolbar">
+                <button type="button" class="small-button" id="publishLeaderboardButton">
+                    Publish Final Results
+                </button>
+
+                <button type="button" class="small-button reject" id="hideLeaderboardButton">
+                    Hide Final Results
+                </button>
+            </div>
+        </section>
+
+
+        <section class="panel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Participant Approvals</h2>
+                    <p class="muted">
+                        Review registration details before granting access.
+                    </p>
+                </div>
+
+                <div class="toolbar">
+                    <input type="search" id="participantSearch" placeholder="Search participants"
+                        aria-label="Search participants">
+
+                    <select id="approvalFilter" aria-label="Filter participants">
+                        <option value="all">All statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>NAME</th>
+                            <th>REGISTER NO.</th>
+                            <th>EMAIL ID</th>
+                            <th>CONTACT NUMBER</th>
+                            <th>COLLEGE</th>
+                            <th>DEPARTMENT</th>
+                            <th>LEVEL 1 APPROVAL</th>
+                            <th>LEVEL 2 APPROVAL</th>
+                            <th>LEVEL 3 APPROVAL</th>
+                            <th>STATUS</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody id="participantTable">
+                        <tr>
+                            <td colspan="11" class="empty-row">
+                                No participant data loaded. Connect the backend
+                                to display real registrations.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Quiz Results & Monitoring</h2>
+                    <p class="muted">
+                        Intended for private admin review after backend integration.
+                    </p>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>PARTICIPANT</th>
+                            <th>LEVEL</th>
+                            <th>CORRECT</th>
+                            <th>WRONG</th>
+                            <th>UNANSWERED</th>
+                            <th>SCORE</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="resultsTableBody">
+                        <tr>
+                            <td colspan="7" class="empty-row">
+                                No results available yet. Results must be fetched
+                                from a protected admin-only backend endpoint.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>
+                &copy; <span id="currentYear"></span> CyberQuiz.
+                All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+
+    <script>
+        document.getElementById("currentYear").textContent =
+            new Date().getFullYear();
+    </script>
+
+
+    <script src="js/admin.js"></script>
+
+</body>
+
+</html>

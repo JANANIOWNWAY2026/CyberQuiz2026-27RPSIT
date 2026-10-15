@@ -1,0 +1,711 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#07111f">
+    <title>CyberQuiz | Leaderboard</title>
+
+    <style>
+        :root {
+            --bg: #07111f;
+            --panel: #0d1b2d;
+            --panel-light: #13263c;
+            --cyan: #00e5ff;
+            --blue: #38bdf8;
+            --text: #e5edf7;
+            --muted: #94a3b8;
+            --border: #263b52;
+            --gold: #fbbf24;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 24px;
+            font-family: Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top, #102b43 0, transparent 42%),
+                var(--bg);
+        }
+
+        button, input, select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: auto;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            color: var(--text);
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: .3px;
+        }
+
+        .logo span {
+            color: var(--cyan);
+        }
+
+        .nav-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 11px 16px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: var(--text);
+            background: var(--panel);
+            text-decoration: none;
+            transition: .2s ease;
+        }
+
+        .btn:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--cyan);
+            border-color: var(--cyan);
+            color: #04111c;
+            font-weight: 800;
+        }
+
+        .btn-primary:hover {
+            background: #7bf3ff;
+            color: #04111c;
+        }
+
+        .page-header {
+            text-align: center;
+            margin: 38px 0 28px;
+        }
+
+        .eyebrow {
+            color: var(--cyan);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 3px;
+        }
+
+        .page-header h1 {
+            margin: 12px 0;
+            font-size: clamp(28px, 5vw, 42px);
+        }
+
+        .page-header p {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            padding: 22px;
+            background: linear-gradient(145deg, var(--panel-light), var(--panel));
+            border: 1px solid var(--border);
+            border-radius: 15px;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            margin-top: 12px;
+            font-size: 27px;
+            font-weight: 800;
+            color: var(--cyan);
+            overflow-wrap: anywhere;
+        }
+
+        .leaderboard-card {
+            padding: 24px;
+            background: rgba(13, 27, 45, .96);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: 0 16px 45px rgba(0, 0, 0, .2);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .live-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .live-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #64748b;
+        }
+
+        .live-dot.online {
+            background: #34d399;
+            box-shadow: 0 0 10px #34d399;
+        }
+
+        .toolbar {
+            display: grid;
+            grid-template-columns: minmax(200px, 1fr) 190px auto;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .search-box, .sort-select {
+            width: 100%;
+            min-width: 0;
+            padding: 13px 14px;
+            color: var(--text);
+            background: #071523;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            outline: none;
+        }
+
+        .search-box:focus, .sort-select:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px rgba(0, 229, 255, .08);
+        }
+
+        .sort-select option {
+            background: var(--panel);
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            min-width: 900px;
+            border-collapse: collapse;
+            background: #0b1929;
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 15px 13px;
+            text-align: left;
+            white-space: nowrap;
+            border-bottom: 1px solid #20354a;
+        }
+
+        .leaderboard-table th {
+            position: sticky;
+            top: 0;
+            background: #13263c;
+            color: var(--cyan);
+            font-size: 11px;
+            letter-spacing: .7px;
+            text-transform: uppercase;
+        }
+
+        .leaderboard-table tbody tr {
+            transition: background .2s ease;
+        }
+
+        .leaderboard-table tbody tr:hover {
+            background: #142a40;
+        }
+
+        .leaderboard-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .leaderboard-table tbody tr.top-one {
+            background: rgba(251, 191, 36, .09);
+        }
+
+        .rank {
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .participant-name {
+            font-weight: 700;
+        }
+
+        .score {
+            color: var(--cyan);
+            font-weight: 800;
+        }
+
+        .level-score {
+            color: #cbd5e1;
+        }
+
+        .message-cell {
+            padding: 38px 20px !important;
+            text-align: center !important;
+            color: var(--muted);
+            white-space: normal !important;
+        }
+
+        .footer {
+            padding: 28px 0 10px;
+            text-align: center;
+            color: #71869d;
+            font-size: 12px;
+        }
+
+        @media (max-width: 760px) {
+            body {
+                padding: 14px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 17px;
+            }
+
+            .stat-value {
+                font-size: 23px;
+            }
+
+            .leaderboard-card {
+                padding: 15px;
+            }
+
+            .toolbar {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                margin-top: 25px;
+            }
+
+            .nav-actions {
+                width: 100%;
+            }
+
+            .nav-actions .btn {
+                flex: 1;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <nav class="navbar">
+        <div class="logo">⬡ Cyber<span>Quiz</span></div>
+
+        <div class="nav-actions">
+            <a href="waiting.html" class="btn">Waiting Room</a>
+            <a href="index.html" class="btn">Home</a>
+            <button type="button" id="refreshButton" class="btn btn-primary">
+                ↻ Refresh
+            </button>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <div class="eyebrow">CYBERSECURITY CHALLENGE</div>
+        <h1>🏆 Leaderboard</h1>
+        <p>Track participant scores, level performance and completion times.</p>
+    </header>
+
+    <section class="stats-grid">
+        <article class="stat-card">
+            <div class="stat-label">Participants shown</div>
+            <div class="stat-value" id="participantCount">—</div>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-label">Highest score</div>
+            <div class="stat-value" id="highestScore">—</div>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-label">Fastest completion</div>
+            <div class="stat-value" id="fastestTime">—</div>
+        </article>
+    </section>
+
+    <main class="leaderboard-card">
+        <div class="section-header">
+            <h2>Final Rankings</h2>
+
+            <div class="live-status">
+                <span class="live-dot" id="liveDot"></span>
+                <span id="statusText" aria-live="polite">Waiting to load</span>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <input
+                id="searchInput"
+                class="search-box"
+                type="search"
+                placeholder="Search name or register number..."
+                aria-label="Search leaderboard"
+            >
+
+            <select id="sortSelect" class="sort-select" aria-label="Sort leaderboard">
+                <option value="rank">Sort by rank</option>
+                <option value="score">Highest score</option>
+                <option value="time">Fastest time</option>
+                <option value="name">Participant name</option>
+            </select>
+
+            <button type="button" id="clearSearchButton" class="btn">
+                Clear search
+            </button>
+        </div>
+
+        <div class="table-wrap">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Participant</th>
+                        <th>Register No.</th>
+                        <th>Level 1</th>
+                        <th>Level 2</th>
+                        <th>Level 3</th>
+                        <th>Total Score</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+
+                <tbody id="leaderboardBody">
+                    <tr>
+                        <td colspan="8" class="message-cell">
+                            Loading leaderboard...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer class="footer">
+        CyberQuiz · Leaderboard
+    </footer>
+</div>
+
+<script>
+    const API_URL = "http://127.0.0.1:8000/api/leaderboard";
+
+    const tableBody = document.getElementById("leaderboardBody");
+    const searchInput = document.getElementById("searchInput");
+    const sortSelect = document.getElementById("sortSelect");
+    const refreshButton = document.getElementById("refreshButton");
+    const clearSearchButton = document.getElementById("clearSearchButton");
+    const statusText = document.getElementById("statusText");
+    const liveDot = document.getElementById("liveDot");
+
+    let allParticipants = [];
+    let isLoading = false;
+
+    function getNumber(value) {
+        const number = Number(value);
+        return Number.isFinite(number) ? number : 0;
+    }
+
+    function getRegisterNumber(participant) {
+        return participant.register_no
+            ?? participant.registration_number
+            ?? participant.register_number
+            ?? participant.reg_no
+            ?? "—";
+    }
+
+    function formatDuration(seconds) {
+        if (seconds == null || seconds === "") return "—";
+
+        const total = Math.max(0, Math.floor(getNumber(seconds)));
+        const hours = Math.floor(total / 3600);
+        const minutes = Math.floor((total % 3600) / 60);
+        const remainingSeconds = total % 60;
+
+        if (hours > 0) {
+            return `${hours}h ${minutes}m`;
+        }
+
+        if (minutes > 0) {
+            return `${minutes}m ${remainingSeconds}s`;
+        }
+
+        return `${remainingSeconds}s`;
+    }
+
+    function setStatus(message, online = false) {
+        statusText.textContent = message;
+        liveDot.classList.toggle("online", online);
+    }
+
+    function showMessage(message) {
+        tableBody.replaceChildren();
+
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+
+        cell.colSpan = 8;
+        cell.className = "message-cell";
+        cell.textContent = message;
+
+        row.appendChild(cell);
+        tableBody.appendChild(row);
+    }
+
+    function getFilteredParticipants() {
+        const query = searchInput.value.trim().toLowerCase();
+
+        let participants = allParticipants.filter(participant => {
+            const searchable = [
+                participant.name,
+                getRegisterNumber(participant),
+                participant.rank,
+                participant.level_1_correct,
+                participant.level_2_correct,
+                participant.level_3_correct
+            ].join(" ").toLowerCase();
+
+            return searchable.includes(query);
+        });
+
+        switch (sortSelect.value) {
+            case "score":
+                participants.sort((a, b) =>
+                    getNumber(b.total_correct) - getNumber(a.total_correct)
+                    || getNumber(a.total_time_seconds) - getNumber(b.total_time_seconds)
+                );
+                break;
+
+            case "time":
+                participants.sort((a, b) =>
+                    getNumber(a.total_time_seconds) - getNumber(b.total_time_seconds)
+                );
+                break;
+
+            case "name":
+                participants.sort((a, b) =>
+                    String(a.name ?? "").localeCompare(String(b.name ?? ""))
+                );
+                break;
+
+            default:
+                participants.sort((a, b) =>
+                    getNumber(a.rank) - getNumber(b.rank)
+                );
+        }
+
+        return participants;
+    }
+
+    function updateSummary(participants) {
+        document.getElementById("participantCount").textContent =
+            participants.length;
+
+        if (!participants.length) {
+            document.getElementById("highestScore").textContent = "—";
+            document.getElementById("fastestTime").textContent = "—";
+            return;
+        }
+
+        const highest = Math.max(
+            ...participants.map(p => getNumber(p.total_correct))
+        );
+
+        const fastest = participants
+            .filter(p => p.total_time_seconds != null)
+            .reduce((best, current) =>
+                best === null
+                    || getNumber(current.total_time_seconds) < getNumber(best.total_time_seconds)
+                    ? current
+                    : best,
+                null
+            );
+
+        document.getElementById("highestScore").textContent = highest;
+        document.getElementById("fastestTime").textContent =
+            fastest ? formatDuration(fastest.total_time_seconds) : "—";
+    }
+
+    function renderLeaderboard() {
+        const participants = getFilteredParticipants();
+
+        updateSummary(participants);
+        tableBody.replaceChildren();
+
+        if (!participants.length) {
+            showMessage(
+                allParticipants.length
+                    ? "No participants match your search."
+                    : "No leaderboard results are available."
+            );
+            return;
+        }
+
+        participants.forEach((participant, index) => {
+            const row = document.createElement("tr");
+
+            if (getNumber(participant.rank ?? index + 1) === 1) {
+                row.classList.add("top-one");
+            }
+
+            const values = [
+                participant.rank ?? index + 1,
+                participant.name ?? "—",
+                getRegisterNumber(participant),
+                participant.level_1_correct ?? "—",
+                participant.level_2_correct ?? "—",
+                participant.level_3_correct ?? "—",
+                `${participant.total_correct ?? "—"}/${participant.total_questions ?? 35}`,
+                formatDuration(participant.total_time_seconds)
+            ];
+
+            values.forEach((value, columnIndex) => {
+                const cell = document.createElement("td");
+                cell.textContent = String(value);
+
+                if (columnIndex === 0) cell.classList.add("rank");
+                if (columnIndex === 1) cell.classList.add("participant-name");
+                if (columnIndex >= 3 && columnIndex <= 5) {
+                    cell.classList.add("level-score");
+                }
+                if (columnIndex === 6) cell.classList.add("score");
+
+                row.appendChild(cell);
+            });
+
+            tableBody.appendChild(row);
+        });
+
+        setStatus(`Showing ${participants.length} participant(s)`, true);
+    }
+
+    async function loadLeaderboard() {
+        if (isLoading) return;
+
+        isLoading = true;
+        refreshButton.disabled = true;
+        refreshButton.textContent = "Loading...";
+        setStatus("Loading leaderboard");
+
+        try {
+            const response = await fetch(API_URL, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                },
+                cache: "no-store"
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    response.status === 404
+                        ? "Leaderboard endpoint not found. Check the backend route."
+                        : `Server returned HTTP ${response.status}.`
+                );
+            }
+
+            const data = await response.json();
+
+            if (data.published === false) {
+                allParticipants = [];
+                renderLeaderboard();
+                setStatus("Results not published");
+                return;
+            }
+
+            const participants = Array.isArray(data)
+                ? data
+                : Array.isArray(data.leaderboard)
+                    ? data.leaderboard
+                    : Array.isArray(data.results)
+                        ? data.results
+                        : [];
+
+            allParticipants = participants;
+            renderLeaderboard();
+
+        } catch (error) {
+            console.error("Leaderboard loading failed:", error);
+            allParticipants = [];
+            showMessage(error.message || "Unable to load leaderboard.");
+            updateSummary([]);
+            setStatus("Connection error");
+        } finally {
+            isLoading = false;
+            refreshButton.disabled = false;
+            refreshButton.textContent = "↻ Refresh";
+        }
+    }
+
+    searchInput.addEventListener("input", renderLeaderboard);
+    sortSelect.addEventListener("change", renderLeaderboard);
+    refreshButton.addEventListener("click", loadLeaderboard);
+
+    clearSearchButton.addEventListener("click", () => {
+        searchInput.value = "";
+        sortSelect.value = "rank";
+        renderLeaderboard();
+        searchInput.focus();
+    });
+
+    loadLeaderboard();
+</script>
+</body>
+</html>
