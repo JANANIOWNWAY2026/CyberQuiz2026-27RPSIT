@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routes.participants import router as participant_router
-from .database import Base, engine
+from .database import Base, engine, SessionLocal
 from . import models
 from .routes.auth import router as auth_router
 from .routes.admin import router as admin_router
@@ -33,8 +33,43 @@ app.include_router(quiz_router)
 app.include_router(leaderboard_router)
 app.include_router(exam_guard_router)
 @app.on_event("startup")
+@app.on_event("startup")
 def create_database_tables():
     Base.metadata.create_all(bind=engine)
+
+    db = SessionLocal()
+    try:
+        level_settings = [
+    (1, 15, 50),  # Level 1: 15 questions, 50 seconds each
+    (2, 10, 40),  # Level 2: 10 questions, 40 seconds each
+    (3, 10, 30),  # Level 3: 10 questions, 30 seconds each
+]
+
+        for level, question_count, seconds_per_question in level_settings:
+            existing_round = (
+                db.query(models.QuizRound)
+                .filter(models.QuizRound.level == level)
+                .first()
+            )
+
+            if existing_round is None:
+                db.add(
+                    models.QuizRound(
+                        level=level,
+                        question_count=question_count,
+                        seconds_per_question=seconds_per_question,
+                        is_unlocked=False,
+                    )
+                )
+
+        db.commit()
+
+    except Exception:
+        db.rollback()
+        raise
+
+    finally:
+        db.close()
 
 
 @app.get("/")

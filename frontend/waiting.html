@@ -730,12 +730,12 @@
         </div>
     </footer>
 
-     <script>
+    <script>
         document.getElementById("currentYear").textContent =
             new Date().getFullYear();
 
+        const API_BASE = "https://cyberquiz-backend.onrender.com";
 
-        const API_BASE = "http://127.0.0.1:8000";
         const token = sessionStorage.getItem("cyberquiz_access_token");
 
         const statusValue = document.getElementById("statusValue");
@@ -863,11 +863,11 @@
                 if (!response.ok) {
                     throw new Error(`Server returned ${response.status}`);
                 }
-                
+
 
                 const levels = await response.json();
-                
-console.log("ACTUAL LEVELS RESPONSE:", levels);
+
+                console.log("ACTUAL LEVELS RESPONSE:", levels);
 
                 if (!Array.isArray(levels)) {
                     throw new Error("Unexpected levels response");
@@ -1042,7 +1042,7 @@ console.log("ACTUAL LEVELS RESPONSE:", levels);
                 const available = await checkResultsAccess();
 
                 if (available) {
-                   window.location.href = new URL("results.html", window.location.href).href;
+                    window.location.href = new URL("results.html", window.location.href).href;
                 } else {
                     setStatus(
                         "WAITING FOR ADMIN",

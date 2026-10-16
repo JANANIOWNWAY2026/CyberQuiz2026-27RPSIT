@@ -445,7 +445,7 @@
 </div>
 
 <script>
-    const API_URL = "http://127.0.0.1:8000/api/leaderboard";
+    const API_URL = "https://cyberquiz-backend.onrender.com/api/leaderboard";
 
     const tableBody = document.getElementById("leaderboardBody");
     const searchInput = document.getElementById("searchInput");
@@ -482,7 +482,6 @@
         if (hours > 0) {
             return `${hours}h ${minutes}m`;
         }
-
         if (minutes > 0) {
             return `${minutes}m ${remainingSeconds}s`;
         }

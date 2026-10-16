@@ -279,8 +279,6 @@
             </p>
         </div>
     </footer>
-
-    ```html
     <script>
         document.getElementById("currentYear").textContent =
             new Date().getFullYear();
@@ -314,7 +312,7 @@
 
             try {
                 const response = await fetch(
-                    "http://127.0.0.1:8000/api/admin/login",
+                    "https://cyberquiz-backend.onrender.com/api/admin/login",
                     {
                         method: "POST",
                         headers: {

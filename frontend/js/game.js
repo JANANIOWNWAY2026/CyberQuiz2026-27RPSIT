@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedAnswer = null;
     let answers = [];
     let isSubmitting = false;
-    const API_BASE = "http://127.0.0.1:8000";
+   const API_BASE = "https://cyberquiz-backend.onrender.com";
 const token = sessionStorage.getItem("cyberquiz_access_token");
 
 let sessionId = null;
@@ -717,6 +717,19 @@ previousButton.addEventListener("click", event => {
 window.addEventListener("pagehide", () => {
     clearInterval(timerInterval);
 });
+// Connect Exam Guard to the existing quiz submission function.
+if (window.CyberQuizExamGuard) {
+    window.CyberQuizExamGuard.submit = async function (reason) {
+        console.warn("Exam Guard triggered:", reason);
+
+        // Save the answer selected for the current question.
+        saveCurrentAnswer(false);
+
+        // Reuse the existing backend submission logic.
+        await finishLevel();
+    };
+}
 
 initializeQuiz();
 });
+

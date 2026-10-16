@@ -290,7 +290,7 @@ def get_round_statuses(
         .all()
     )
 
-    controls = {
+    controls   = {
         control.level: control
         for control in db.query(RoundControl).all()
     }

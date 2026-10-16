@@ -7,10 +7,8 @@
 "use strict";
 
 // FastAPI backend address
-const API_BASE_URL = "http://127.0.0.1:8000";
-
-/*
- * Display a message inside the form.
+ const API_BASE_URL = "https://cyberquiz-backend.onrender.com";
+ /* Display a message inside the form.
  */
 function showAuthMessage(form, message, isError = true) {
     let messageBox = form.querySelector(".auth-message");

@@ -435,7 +435,7 @@
 
             try {
                 const response = await fetch(
-                    "http://127.0.0.1:8000/api/auth/register",
+                    "https://cyberquiz-backend.onrender.com/api/auth/register",
                     {
                         method: "POST",
                         headers: {
@@ -482,15 +482,21 @@
         passwordInput.type === "password" ? "Show Password" : "Hide Password";
 });
 
-document.getElementById("toggleConfirmPassword").addEventListener("click", function () {
-    const confirmInput = document.getElementById("confirmPassword");
 
-    confirmInput.type =
-        confirmInput.type === "password" ? "text" : "password";
+   const toggleConfirmPassword =
+    document.getElementById("toggleConfirmPassword");
 
-    this.textContent =
-        confirmInput.type === "password" ? "Show Password" : "Hide Password";
-});
+if (toggleConfirmPassword) {
+    toggleConfirmPassword.addEventListener("click", function () {
+        const confirmInput = document.getElementById("confirmPassword");
+
+        confirmInput.type =
+            confirmInput.type === "password" ? "text" : "password";
+
+        this.textContent =
+            confirmInput.type === "password" ? "Show Password" : "Hide Password";
+    });
+}
     </script>
 </body>
 
