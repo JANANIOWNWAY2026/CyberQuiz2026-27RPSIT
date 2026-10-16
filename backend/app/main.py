@@ -32,7 +32,7 @@ app.include_router(participant_router)
 app.include_router(quiz_router)
 app.include_router(leaderboard_router)
 app.include_router(exam_guard_router)
-@app.on_event("startup")
+
 @app.on_event("startup")
 def create_database_tables():
     Base.metadata.create_all(bind=engine)

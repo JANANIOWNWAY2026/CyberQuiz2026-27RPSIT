@@ -447,17 +447,20 @@ def authorize_quiz_retry(
 
 
 
+
 @router.get("/results")
 def get_quiz_results(
     db: Session = Depends(get_db),
     admin: dict = Depends(require_admin),
 ):
-    participants = (
-        db.query(Participant)
-        .order_by(Participant.created_at.desc())
-        .all()
-    )
+    # Participant details
+    participants = db.query(Participant).all()
+    participants_by_id = {
+        participant.id: participant
+        for participant in participants
+    }
 
+    # Configured question count for each level
     rounds = {
         round_.level: round_.question_count
         for round_ in db.query(QuizRound)
@@ -465,6 +468,7 @@ def get_quiz_results(
         .all()
     }
 
+    # Latest submitted result for each participant and level
     results = (
         db.query(QuizResult)
         .filter(QuizResult.level.in_([1, 2, 3]))
@@ -475,7 +479,6 @@ def get_quiz_results(
         .all()
     )
 
-    # Keep the latest submitted result for each participant and level.
     latest_results = {}
 
     for result in results:
@@ -486,63 +489,49 @@ def get_quiz_results(
 
     response = []
 
-    for participant in participants:
-        participant_results = [
-            latest_results.get((participant.id, level))
-            for level in (1, 2, 3)
-        ]
+    # One table row for each completed participant-level result
+    for (participant_id, level), result in latest_results.items():
+        participant = participants_by_id.get(participant_id)
 
-        submitted_results = [
-            result
-            for result in participant_results
-            if result is not None
-        ]
+        if participant is None:
+            continue
 
-        correct = sum(
-            result.correct_answers or 0
-            for result in submitted_results
-        )
-        incorrect = sum(
-            result.wrong_answers or 0
-            for result in submitted_results
-        )
-        unanswered = sum(
-            result.unanswered or 0
-            for result in submitted_results
-        )
-        total_score = sum(
-            result.score or 0
-            for result in submitted_results
-        )
+        correct = int(result.correct_answers or 0)
+        wrong = int(result.wrong_answers or 0)
+        unanswered = int(result.unanswered or 0)
 
-        total_questions = sum(
-            rounds.get(level, 0)
-            for level in (1, 2, 3)
-        )
-
-        all_levels_completed = (
-            all(participant_results[level - 1] is not None for level in (1, 2, 3))
-            and all(rounds.get(level, 0) > 0 for level in (1, 2, 3))
+        total_questions = rounds.get(level) or (
+            correct + wrong + unanswered
         )
 
         response.append({
             "participant_id": participant.id,
             "participant_name": participant.name,
             "register_number": participant.register_number,
+
+            "level": level,
             "total_questions": total_questions,
+
             "correct_answers": correct,
-            "wrong_answers": incorrect,
+            "wrong_answers": wrong,
             "unanswered": unanswered,
-            "score": total_score,
-            "completed_levels": len(submitted_results),
-            "status": (
-                "Completed"
-                if all_levels_completed
-                else "In Progress"
-            ),
+            "score": result.score or 0,
+
+            "duration_seconds": result.duration_seconds or 0,
+            "submitted_at": result.submitted_at,
+            "status": "Completed",
         })
 
+    # Newest submitted results first
+    response.sort(
+        key=lambda item: item["submitted_at"] or datetime.min.replace(
+            tzinfo=timezone.utc
+        ),
+        reverse=True,
+    )
+
     return response
+
 
 
 

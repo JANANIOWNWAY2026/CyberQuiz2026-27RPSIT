@@ -876,12 +876,13 @@
         </section>
 
         
+
 <section class="panel" id="quizResultsPanel">
     <div class="panel-heading">
         <div>
             <h2>Quiz Results &amp; Monitoring</h2>
             <p class="muted">
-                Combined results for all three levels.
+                Level-wise participant performance and exam status.
             </p>
         </div>
     </div>
@@ -891,19 +892,21 @@
             <thead>
                 <tr>
                     <th>PARTICIPANT</th>
+                    <th>LEVEL</th>
                     <th>TOTAL QUESTIONS</th>
                     <th>CORRECT</th>
                     <th>INCORRECT</th>
                     <th>UNANSWERED</th>
-                    <th>TOTAL SCORE</th>
+                    <th>SCORE</th>
+                    <th>TAKEN TIME</th>
                     <th>STATUS</th>
                 </tr>
             </thead>
 
             <tbody id="resultsTableBody">
                 <tr>
-                    <td colspan="7" class="empty-row">
-                        No results available yet.
+                    <td colspan="9" class="empty-row">
+                        Loading quiz results...
                     </td>
                 </tr>
             </tbody>

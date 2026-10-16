@@ -467,10 +467,18 @@ async function loadAdminRoundStatuses() {
     }
 }
 
+
 /* =========================================
    RESULTS
 ========================================= */
 
+function formatTimeTaken(seconds) {
+    const totalSeconds = Math.max(0, Number(seconds) || 0);
+    const minutes = Math.floor(totalSeconds / 60);
+    const remainingSeconds = totalSeconds % 60;
+
+    return `${minutes}m ${remainingSeconds}s`;
+}
 
 async function loadAdminResults() {
     const tableBody = document.querySelector(
@@ -478,6 +486,15 @@ async function loadAdminResults() {
     );
 
     if (!tableBody) return;
+
+    tableBody.replaceChildren();
+
+    const loadingRow = document.createElement("tr");
+    const loadingCell = document.createElement("td");
+    loadingCell.colSpan = 9;
+    loadingCell.textContent = "Loading quiz results...";
+    loadingRow.appendChild(loadingCell);
+    tableBody.appendChild(loadingRow);
 
     try {
         const result = await adminApiRequest("/api/admin/results");
@@ -491,16 +508,18 @@ async function loadAdminResults() {
         const completedCount = document.getElementById("completedCount");
 
         if (completedCount) {
-            completedCount.textContent = allAdminResults.filter(
-                item => item.status === "Completed"
+            completedCount.textContent = allAdminResults.filter(item =>
+                String(item.status || "").toLowerCase() === "completed"
             ).length;
         }
 
         if (!allAdminResults.length) {
             const row = document.createElement("tr");
             const cell = document.createElement("td");
-            cell.colSpan = 7;
+
+            cell.colSpan = 9;
             cell.textContent = "No participant results available yet.";
+
             row.appendChild(cell);
             tableBody.appendChild(row);
             return;
@@ -509,19 +528,46 @@ async function loadAdminResults() {
         allAdminResults.forEach(item => {
             const row = document.createElement("tr");
 
-            [
-                item.participant_name || "—",
-                item.total_questions ?? 0,
+            const level = item.level
+                ? `Level ${item.level}`
+                : "—";
+
+            const status = item.status || "Completed";
+
+            const values = [
+                item.participant_name || item.name || "—",
+                level,
+                item.total_questions ??
+                    (
+                        Number(item.correct_answers || 0) +
+                        Number(item.wrong_answers || 0) +
+                        Number(item.unanswered || 0)
+                    ),
                 item.correct_answers ?? 0,
                 item.wrong_answers ?? 0,
                 item.unanswered ?? 0,
                 item.score ?? 0,
-                item.status || "In Progress"
-            ].forEach(value => createCell(row, value));
+                formatTimeTaken(item.duration_seconds),
+                status
+            ];
+
+            values.forEach(value => createCell(row, value));
 
             tableBody.appendChild(row);
         });
+
     } catch (error) {
+        tableBody.replaceChildren();
+
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+
+        cell.colSpan = 9;
+        cell.textContent = `Could not load results: ${error.message}`;
+
+        row.appendChild(cell);
+        tableBody.appendChild(row);
+
         showAdminMessage(
             `Could not load results: ${error.message}`,
             true
