@@ -133,12 +133,15 @@ def get_level_questions(db: Session, level: int, count: int):
         .all()
     )
 
+    print(
+    f"DEBUG: level={level}, requested={count}, "
+    f"found={len(questions)}"
+)
     if len(questions) != count:
-        raise HTTPException(
-            status_code=409,
-            detail="Question bank is incomplete",
-        )
-
+       raise HTTPException(
+        status_code=409,
+        detail="Question bank is incomplete",
+    )
     return questions
 
 
